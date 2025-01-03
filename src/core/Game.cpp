@@ -3,6 +3,7 @@
 #include <iostream>
 #include <ostream>
 #include <SDL.h>
+#include <SDL_image.h>
 
 
 Game::Game() {
@@ -48,9 +49,7 @@ void Game::Initialize() {
     isRunning = true;
 }
 
-void Game::Setup() {
-
-}
+void Game::Setup() {}
 
 void Game::Run() {
     Setup();
@@ -86,6 +85,12 @@ void Game::Render() const {
     SDL_RenderClear(renderer.get());
     // Render all game objects and UI
 
+    const auto surface = IMG_Load("./assets/images/tank-tiger-right.png");
+    const auto texture = SDL_CreateTextureFromSurface(renderer.get(), surface);
+    SDL_FreeSurface(surface);
+    constexpr SDL_Rect dstRect{200, 200, 64, 64};
+    SDL_RenderCopy(renderer.get(), texture, nullptr, &dstRect);
+    SDL_DestroyTexture(texture);
 
     SDL_RenderPresent(renderer.get());
 }
