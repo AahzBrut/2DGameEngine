@@ -1,22 +1,9 @@
 #pragma once
 
 #include <memory>
-#include <SDL_render.h>
-#include <SDL_video.h>
 
 #include "Core.h"
 
-struct SDLWindowDeleter {
-    void operator()(SDL_Window* window) const {
-        SDL_DestroyWindow(window);
-    }
-};
-
-struct SDLRendererDeleter {
-    void operator()(SDL_Renderer* renderer) const {
-        SDL_DestroyRenderer(renderer);
-    }
-};
 
 class Game {
     bool isRunning{false};
@@ -24,14 +11,19 @@ class Game {
     UniqueWithDeleter<SDL_Renderer, SDLRendererDeleter> renderer;
 
 public:
+    int windowWidth{0};
+    int windowHeight{0};
+
     Game();
+    ~Game();
 
     void Initialize();
+    void Setup();
     void Run();
 
     void ProcessInput();
     void Update();
-    void Render();
+    void Render() const;
 
     void Destroy();
 };

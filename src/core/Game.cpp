@@ -4,10 +4,13 @@
 #include <ostream>
 #include <SDL.h>
 
-#include "core/Core.h"
 
 Game::Game() {
     std::cout << "Game constructor called." << std::endl;
+}
+
+Game::~Game() {
+    std::cout << "Game destructor called." << std::endl;
 }
 
 void Game::Initialize() {
@@ -16,12 +19,17 @@ void Game::Initialize() {
         return;
     }
 
+    SDL_DisplayMode displayMode;
+    SDL_GetCurrentDisplayMode(0, &displayMode);
+    windowWidth = 800;
+    windowHeight = 600;
+
     window = UniqueWithDeleter<SDL_Window, SDLWindowDeleter>(SDL_CreateWindow(
         nullptr,
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
-        800,
-        600,
+        windowWidth,
+        windowHeight,
         SDL_WINDOW_BORDERLESS
     ));
     if (!window) {
@@ -35,10 +43,17 @@ void Game::Initialize() {
         return;
     }
 
+    SDL_SetWindowFullscreen(window.get(), SDL_WINDOW_FULLSCREEN);
+
     isRunning = true;
 }
 
+void Game::Setup() {
+
+}
+
 void Game::Run() {
+    Setup();
     while (isRunning) {
         ProcessInput();
         Update();
@@ -65,7 +80,15 @@ void Game::ProcessInput() {
 }
 
 void Game::Update() {}
-void Game::Render() {}
+
+void Game::Render() const {
+    SDL_SetRenderDrawColor(renderer.get(), 0, 0, 64, 255);
+    SDL_RenderClear(renderer.get());
+    // Render all game objects and UI
+
+
+    SDL_RenderPresent(renderer.get());
+}
 
 void Game::Destroy() {
     SDL_DestroyRenderer(renderer.get());
