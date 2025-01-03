@@ -27,7 +27,9 @@ FetchContent_MakeAvailable(SDL2 glm)
 
 add_executable(2DGameEngine src/main.cpp
         include/core/Game.h
-        src/core/Game.cpp)
+        src/core/Game.cpp
+        include/core/Core.h
+)
 
 target_link_libraries(2DGameEngine PRIVATE SDL2::SDL2main SDL2::SDL2-static glm)
 target_include_directories(2DGameEngine PUBLIC include)
