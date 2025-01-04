@@ -40,6 +40,7 @@ add_executable(2DGameEngine src/main.cpp
         include/core/Game.h
         src/core/Game.cpp
         include/core/Core.h
+        include/core/Logger.h
 )
 
 target_link_libraries(2DGameEngine PRIVATE SDL2::SDL2main SDL2::SDL2-static glm SDL2_image::SDL2_image-static)

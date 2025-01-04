@@ -1,17 +1,21 @@
 #include "core/Game.h"
 
+#include <format>
 #include <iostream>
 #include <ostream>
 #include <SDL.h>
 #include <SDL_image.h>
 
+#include "core/Logger.h"
+#include "glm/vec2.hpp"
+
 
 Game::Game() {
-    std::cout << "Game constructor called." << std::endl;
+    LOG("Game constructor called.");
 }
 
 Game::~Game() {
-    std::cout << "Game destructor called." << std::endl;
+    LOG("Game destructor called.");
 }
 
 void Game::Initialize() {
@@ -44,12 +48,19 @@ void Game::Initialize() {
         return;
     }
 
-    SDL_SetWindowFullscreen(window.get(), SDL_WINDOW_FULLSCREEN);
+    //SDL_SetWindowFullscreen(window.get(), SDL_WINDOW_FULLSCREEN);
+    SDL_GL_SetSwapInterval(0);
 
     isRunning = true;
 }
 
-void Game::Setup() {}
+glm::vec2 playerPosition;
+glm::vec2 playerVelocity;
+
+void Game::Setup() {
+    playerPosition = {10, 20};
+    playerVelocity = {60, 0};
+}
 
 void Game::Run() {
     Setup();
@@ -78,7 +89,16 @@ void Game::ProcessInput() {
     }
 }
 
-void Game::Update() {}
+void Game::Update() {
+    if (const auto timeToWait = MILLIS_PER_FRAME - (SDL_GetTicks() - lastFrameTicks);
+        timeToWait <= MILLIS_PER_FRAME && timeToWait > 0) {
+        SDL_Delay(MILLIS_PER_FRAME - (SDL_GetTicks() - lastFrameTicks));
+    }
+    const auto deltaTime = (SDL_GetTicks() - lastFrameTicks) / 1000.0f;
+    LOG("Time to wait: {:.4f} ms", deltaTime);
+    playerPosition += playerVelocity * deltaTime;
+    lastFrameTicks = SDL_GetTicks();
+}
 
 void Game::Render() const {
     SDL_SetRenderDrawColor(renderer.get(), 0, 0, 64, 255);
@@ -88,7 +108,7 @@ void Game::Render() const {
     const auto surface = IMG_Load("./assets/images/tank-tiger-right.png");
     const auto texture = SDL_CreateTextureFromSurface(renderer.get(), surface);
     SDL_FreeSurface(surface);
-    constexpr SDL_Rect dstRect{200, 200, 64, 64};
+    const SDL_Rect dstRect{static_cast<int>(playerPosition.x), static_cast<int>(playerPosition.y), 64, 64};
     SDL_RenderCopy(renderer.get(), texture, nullptr, &dstRect);
     SDL_DestroyTexture(texture);
 

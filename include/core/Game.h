@@ -1,12 +1,15 @@
 #pragma once
 
 #include <memory>
-#include <SDL_render.h>
-#include <SDL_video.h>
+#include <SDL.h>
 #include "Core.h"
 
 
+constexpr auto FPS = 60;
+constexpr auto MILLIS_PER_FRAME = 1000 / FPS;
+
 class Game {
+    Uint32 lastFrameTicks{0};
     bool isRunning{false};
     Unique<SDL_Window> window;
     Unique<SDL_Renderer> renderer;
