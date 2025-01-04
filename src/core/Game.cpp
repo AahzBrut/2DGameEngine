@@ -25,7 +25,7 @@ void Game::Initialize() {
     windowWidth = 800;
     windowHeight = 600;
 
-    window = UniqueWithDeleter<SDL_Window, SDLWindowDeleter>(SDL_CreateWindow(
+    window = Unique<SDL_Window>(SDL_CreateWindow(
         nullptr,
         SDL_WINDOWPOS_CENTERED,
         SDL_WINDOWPOS_CENTERED,
@@ -38,7 +38,7 @@ void Game::Initialize() {
         return;
     }
 
-    renderer = UniqueWithDeleter<SDL_Renderer, SDLRendererDeleter>(SDL_CreateRenderer(window.get(), -1, 0));
+    renderer = Unique<SDL_Renderer>(SDL_CreateRenderer(window.get(), -1, 0));
     if (!renderer) {
         std::cerr << "Error creating SDL renderer: " << SDL_GetError() << std::endl;
         return;
@@ -96,7 +96,7 @@ void Game::Render() const {
 }
 
 void Game::Destroy() {
-    SDL_DestroyRenderer(renderer.get());
-    SDL_DestroyWindow(window.get());
+    SDL_DestroyRenderer(renderer.release());
+    SDL_DestroyWindow(window.release());
     SDL_Quit();
 }

@@ -1,14 +1,15 @@
 #pragma once
 
 #include <memory>
-
+#include <SDL_render.h>
+#include <SDL_video.h>
 #include "Core.h"
 
 
 class Game {
     bool isRunning{false};
-    UniqueWithDeleter<SDL_Window, SDLWindowDeleter> window;
-    UniqueWithDeleter<SDL_Renderer, SDLRendererDeleter> renderer;
+    Unique<SDL_Window> window;
+    Unique<SDL_Renderer> renderer;
 
 public:
     int windowWidth{0};
