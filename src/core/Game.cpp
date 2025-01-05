@@ -10,6 +10,7 @@
 #include "components/VelocityComponent.h"
 #include "core/Logger.h"
 #include "glm/vec2.hpp"
+#include "systems/MovementSystem.h"
 
 
 Game::Game() {
@@ -60,25 +61,27 @@ glm::vec2 playerPosition;
 glm::vec2 playerVelocity;
 
 void Game::Setup() const {
+    registry->AddSystem<MovementSystem>();
+
     playerPosition = {10, 20};
     playerVelocity = {60, 0};
 
     auto tank = registry->CreateEntity();
     tank.AddComponent<TransformComponent>(glm::vec2{0, 0}, glm::vec2{1, 1}, 0.0);
-    tank.AddComponent<VelocityComponent>(glm::vec2{0, 0});
+    tank.AddComponent<VelocityComponent>(glm::vec2{10, 10});
 
      auto truck = registry->CreateEntity();
     truck.AddComponent<TransformComponent>(glm::vec2{0, 0}, glm::vec2{1, 1}, 0.0);
-    truck.AddComponent<VelocityComponent>(glm::vec2{0, 0});
+    truck.AddComponent<VelocityComponent>(glm::vec2{5, 0});
 }
 
 void Game::Run() {
     Setup();
     while (isRunning) {
         ProcessInput();
-        registry->Update();
         Update();
         Render();
+        registry->Update();
     }
 }
 
@@ -107,6 +110,9 @@ void Game::Update() {
     }
     const auto deltaTime = static_cast<float>(SDL_GetTicks() - lastFrameTicks) / 1000.0f;
     playerPosition += playerVelocity * deltaTime;
+
+    registry->GetSystem<MovementSystem>().Update(deltaTime);
+
     lastFrameTicks = SDL_GetTicks();
 }
 
