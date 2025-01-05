@@ -71,7 +71,7 @@ Entity Registry::CreateEntity() {
 
 void Registry::KillEntity(const Entity &entity) {
     entitiesToBeKilled.insert(entity);
-    LOG("Entity with id: {} was killed", std::to_string(entity.GetId()));
+    LOG("Entity with id: {} was killed", entity.GetId());
 }
 
 void Registry::AddEntityToSystems(const Entity &entity) const {
@@ -133,7 +133,7 @@ bool Registry::EntityBelongsToGroup(const Entity &entity, const std::string &gro
 
 std::vector<Entity> Registry::GetEntitiesByGroup(const std::string &group) const {
     auto &setOfEntities = entitiesPerGroup.at(group);
-    return std::vector(setOfEntities.begin(), setOfEntities.end());
+    return {setOfEntities.begin(), setOfEntities.end()};
 }
 
 void Registry::RemoveEntityGroup(const Entity &entity) {
@@ -157,7 +157,7 @@ void Registry::Update() {
         RemoveEntityFromSystems(entity);
         entityComponentSignatures[entity.GetId()].reset();
 
-        for (auto pool: componentPools) {
+        for (const auto& pool: componentPools) {
             if (pool) {
                 pool->RemoveEntityFromPool(entity.GetId());
             }

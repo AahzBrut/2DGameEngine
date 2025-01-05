@@ -46,19 +46,19 @@ public:
     explicit Entity(const int id): id{id}, registry{nullptr} {}
     Entity(const Entity &entity) = default;
     void Kill() const;
-    int GetId() const;
+    [[nodiscard]] int GetId() const;
 
     void Tag(const std::string &tag) const;
-    bool HasTag(const std::string &tag) const;
+    [[nodiscard]] bool HasTag(const std::string &tag) const;
     void Group(const std::string &group) const;
-    bool BelongsToGroup(const std::string &group) const;
+    [[nodiscard]] bool BelongsToGroup(const std::string &group) const;
 
     template<typename TComponent, typename... TArgs>
     void AddComponent(TArgs &&... args);
     template<typename TComponent>
     void RemoveComponent() const;
     template<typename TComponent>
-    bool HasComponent() const;
+    [[nodiscard]] bool HasComponent() const;
     template<typename TComponent>
     TComponent &GetComponent() const;
 
@@ -82,8 +82,8 @@ public:
 
     void AddEntityToSystem(const Entity &entity);
     void RemoveEntityFromSystem(Entity entity);
-    List<Entity> GetSystemEntities() const;
-    const Signature &GetComponentSignature() const;
+    [[nodiscard]] List<Entity> GetSystemEntities() const;
+    [[nodiscard]] const Signature &GetComponentSignature() const;
 
     template<typename TComponent>
     void RequireComponent();
@@ -304,7 +304,7 @@ void Registry::RemoveComponent(const Entity entity) {
 
     entityComponentSignatures[entityId].set(componentId, false);
 
-    LOG("Component id = " + std::to_string(componentId) + " was removed from entity id " + std::to_string(entityId));
+    LOG("Component {} with id: {} was removed from entity with id: {}", typeid(TComponent).name(), componentId, entityId);
 }
 
 template<typename TComponent>
