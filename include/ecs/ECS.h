@@ -78,7 +78,7 @@ class System {
 
         void AddEntityToSystem(Entity entity);
         void RemoveEntityFromSystem(Entity entity);
-        std::vector<Entity> GetSystemEntities() const;
+        List<Entity> GetSystemEntities() const;
         const Signature& GetComponentSignature() const;
 
         template <typename TComponent> void RequireComponent();
@@ -277,7 +277,7 @@ void Registry::AddComponent(const Entity entity, TArgs&& ...args) {
 
     entityComponentSignatures[entityId].set(componentId);
 
-    LOG("Component id = {} was added to entity id {}", componentId, entityId);
+    LOG("Component {}, with id = {} was added to entity id {}", typeid(TComponent).name(), componentId, entityId);
 }
 
 template <typename TComponent>
