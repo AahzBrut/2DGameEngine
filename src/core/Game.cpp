@@ -7,6 +7,7 @@
 #include <SDL_image.h>
 
 #include "components/TransformComponent.h"
+#include "components/VelocityComponent.h"
 #include "core/Logger.h"
 #include "glm/vec2.hpp"
 
@@ -58,17 +59,17 @@ void Game::Initialize() {
 glm::vec2 playerPosition;
 glm::vec2 playerVelocity;
 
-void Game::Setup() {
+void Game::Setup() const {
     playerPosition = {10, 20};
     playerVelocity = {60, 0};
 
-    const auto tank = registry->CreateEntity();
+    auto tank = registry->CreateEntity();
+    tank.AddComponent<TransformComponent>(glm::vec2{0, 0}, glm::vec2{1, 1}, 0.0);
+    tank.AddComponent<VelocityComponent>(glm::vec2{0, 0});
 
-    registry->AddComponent<TransformComponent>(tank, glm::vec2{0,0}, glm::vec2{1,1}, 0.0);
-
-
-    const auto truck = registry->CreateEntity();
-
+     auto truck = registry->CreateEntity();
+    truck.AddComponent<TransformComponent>(glm::vec2{0, 0}, glm::vec2{1, 1}, 0.0);
+    truck.AddComponent<VelocityComponent>(glm::vec2{0, 0});
 }
 
 void Game::Run() {

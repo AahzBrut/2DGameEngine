@@ -46,6 +46,7 @@ add_executable(2DGameEngine src/main.cpp
         include/ecs/ECS.h
         include/core/Collections.h
         src/ecs/ECS.cpp
+        include/components/VelocityComponent.h
 )
 
 target_link_libraries(2DGameEngine PRIVATE SDL2::SDL2main SDL2::SDL2-static glm SDL2_image::SDL2_image-static)

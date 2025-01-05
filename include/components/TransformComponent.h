@@ -1,7 +1,8 @@
 #pragma once
-#include <glm/vec2.hpp>
 
 #include "ecs/ECS.h"
+#include "glm/vec2.hpp"
+#include "glm/detail/func_packing_simd.inl"
 
 
 struct TransformComponent : Component<TransformComponent> {

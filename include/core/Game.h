@@ -24,7 +24,7 @@ public:
     ~Game();
 
     void Initialize();
-    void Setup();
+    void Setup() const;
     void Run();
 
     void ProcessInput();

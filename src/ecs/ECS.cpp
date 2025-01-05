@@ -14,28 +14,28 @@ void Entity::Kill() const {
     registry->KillEntity(*this);
 }
 
-void Entity::Tag(const std::string& tag) const {
-	registry->TagEntity(*this, tag);
+void Entity::Tag(const std::string &tag) const {
+    registry->TagEntity(*this, tag);
 }
 
-bool Entity::HasTag(const std::string& tag) const {
-	return registry->EntityHasTag(*this, tag);
+bool Entity::HasTag(const std::string &tag) const {
+    return registry->EntityHasTag(*this, tag);
 }
 
-void Entity::Group(const std::string& group) const {
-	registry->GroupEntity(*this, group);
+void Entity::Group(const std::string &group) const {
+    registry->GroupEntity(*this, group);
 }
 
-bool Entity::BelongsToGroup(const std::string& group) const {
-	return registry->EntityBelongsToGroup(*this, group);
+bool Entity::BelongsToGroup(const std::string &group) const {
+    return registry->EntityBelongsToGroup(*this, group);
 }
 
-void System::AddEntityToSystem(const Entity entity) {
+void System::AddEntityToSystem(const Entity &entity) {
     entities.push_back(entity);
 }
 
 void System::RemoveEntityFromSystem(Entity entity) {
-    std::erase_if(entities, [&entity](const Entity other) {
+    std::erase_if(entities, [&entity](const Entity &other) {
         return entity == other;
     });
 }
@@ -44,7 +44,7 @@ std::vector<Entity> System::GetSystemEntities() const {
     return entities;
 }
 
-const Signature& System::GetComponentSignature() const {
+const Signature &System::GetComponentSignature() const {
     return componentSignature;
 }
 
@@ -69,46 +69,47 @@ Entity Registry::CreateEntity() {
     return entity;
 }
 
-void Registry::KillEntity(const Entity entity) {
+void Registry::KillEntity(const Entity &entity) {
     entitiesToBeKilled.insert(entity);
     LOG("Entity with id: {} was killed", std::to_string(entity.GetId()));
 }
 
-void Registry::AddEntityToSystems(const Entity entity) const {
+void Registry::AddEntityToSystems(const Entity &entity) const {
     const auto entityId = entity.GetId();
 
-    const auto& entityComponentSignature = entityComponentSignatures[entityId];
+    const auto &entityComponentSignature = entityComponentSignatures[entityId];
 
-    for (auto& system: std::ranges::views::values(systems)) {
-        if (const auto& systemComponentSignature = system->GetComponentSignature(); (entityComponentSignature & systemComponentSignature) == systemComponentSignature) {
+    for (auto &system: std::ranges::views::values(systems)) {
+        if (const auto &systemComponentSignature = system->GetComponentSignature();
+            (entityComponentSignature & systemComponentSignature) == systemComponentSignature) {
             system->AddEntityToSystem(entity);
         }
     }
 }
 
-void Registry::RemoveEntityFromSystems(const Entity entity) const {
-    for (const auto& val: systems | std::views::values) {
+void Registry::RemoveEntityFromSystems(const Entity &entity) const {
+    for (const auto &val: systems | std::views::values) {
         val->RemoveEntityFromSystem(entity);
     }
 }
 
-void Registry::TagEntity(Entity entity, const std::string& tag) {
+void Registry::TagEntity(Entity entity, const std::string &tag) {
     entityPerTag.emplace(tag, entity);
     tagPerEntity.emplace(entity.GetId(), tag);
 }
 
-bool Registry::EntityHasTag(const Entity entity, const std::string& tag) const {
-	if (!tagPerEntity.contains(entity.GetId())) {
-		return false;
-	}
-	return entityPerTag.find(tag)->second == entity;
+bool Registry::EntityHasTag(const Entity &entity, const std::string &tag) const {
+    if (!tagPerEntity.contains(entity.GetId())) {
+        return false;
+    }
+    return entityPerTag.find(tag)->second == entity;
 }
 
-Entity Registry::GetEntityByTag(const std::string& tag) const {
+Entity Registry::GetEntityByTag(const std::string &tag) const {
     return entityPerTag.at(tag);
 }
 
-void Registry::RemoveEntityTag(const Entity entity) {
+void Registry::RemoveEntityTag(const Entity &entity) {
     if (const auto taggedEntity = tagPerEntity.find(entity.GetId()); taggedEntity != tagPerEntity.end()) {
         const auto tag = taggedEntity->second;
         entityPerTag.erase(tag);
@@ -116,26 +117,26 @@ void Registry::RemoveEntityTag(const Entity entity) {
     }
 }
 
-void Registry::GroupEntity(Entity entity, const std::string& group) {
+void Registry::GroupEntity(Entity entity, const std::string &group) {
     entitiesPerGroup.emplace(group, std::set<Entity>());
     entitiesPerGroup[group].emplace(entity);
     groupPerEntity.emplace(entity.GetId(), group);
 }
 
-bool Registry::EntityBelongsToGroup(const Entity entity, const std::string& group) const {
+bool Registry::EntityBelongsToGroup(const Entity &entity, const std::string &group) const {
     if (!entitiesPerGroup.contains(group)) {
         return false;
     }
-	const auto groupEntities = entitiesPerGroup.at(group);
+    const auto groupEntities = entitiesPerGroup.at(group);
     return groupEntities.contains(entity);
 }
 
-std::vector<Entity> Registry::GetEntitiesByGroup(const std::string& group) const {
-    auto& setOfEntities = entitiesPerGroup.at(group);
+std::vector<Entity> Registry::GetEntitiesByGroup(const std::string &group) const {
+    auto &setOfEntities = entitiesPerGroup.at(group);
     return std::vector(setOfEntities.begin(), setOfEntities.end());
 }
 
-void Registry::RemoveEntityGroup(const Entity entity) {
+void Registry::RemoveEntityGroup(const Entity &entity) {
     if (const auto groupedEntity = groupPerEntity.find(entity.GetId()); groupedEntity != groupPerEntity.end()) {
         if (const auto group = entitiesPerGroup.find(groupedEntity->second); group != entitiesPerGroup.end()) {
             if (const auto entityInGroup = group->second.find(entity); entityInGroup != group->second.end()) {
@@ -164,8 +165,8 @@ void Registry::Update() {
 
         freeIds.push_back(entity.GetId());
 
-	    RemoveEntityTag(entity);
-	    RemoveEntityGroup(entity);
+        RemoveEntityTag(entity);
+        RemoveEntityGroup(entity);
     }
     entitiesToBeKilled.clear();
 }
