@@ -24,6 +24,7 @@ struct IComponent {
         static int nextId;
 };
 
+// ReSharper disable once CppTemplateParameterNeverUsed
 template <typename T>
 class Component: public IComponent {
     public:
