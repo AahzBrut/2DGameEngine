@@ -6,11 +6,13 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
+#include "components/SpriteComponent.h"
 #include "components/TransformComponent.h"
 #include "components/VelocityComponent.h"
 #include "core/Logger.h"
 #include "glm/vec2.hpp"
 #include "systems/MovementSystem.h"
+#include "systems/RenderSystem.h"
 
 
 Game::Game() {
@@ -52,27 +54,24 @@ void Game::Initialize() {
     }
 
     //SDL_SetWindowFullscreen(window.get(), SDL_WINDOW_FULLSCREEN);
-    SDL_GL_SetSwapInterval(0);
+    //SDL_GL_SetSwapInterval(0);
 
     isRunning = true;
 }
 
-glm::vec2 playerPosition;
-glm::vec2 playerVelocity;
-
 void Game::Setup() const {
     registry->AddSystem<MovementSystem>();
-
-    playerPosition = {10, 20};
-    playerVelocity = {60, 0};
+    registry->AddSystem<RenderSystem>();
 
     auto tank = registry->CreateEntity();
     tank.AddComponent<TransformComponent>(glm::vec2{0, 0}, glm::vec2{1, 1}, 0.0);
     tank.AddComponent<VelocityComponent>(glm::vec2{10, 10});
+    tank.AddComponent<SpriteComponent>(glm::vec2{64, 64}, glm::vec4{0, 255, 0, 255});
 
      auto truck = registry->CreateEntity();
     truck.AddComponent<TransformComponent>(glm::vec2{0, 0}, glm::vec2{1, 1}, 0.0);
     truck.AddComponent<VelocityComponent>(glm::vec2{5, 0});
+    truck.AddComponent<SpriteComponent>(glm::vec2{32, 32}, glm::vec4{255, 0, 0, 255});
 }
 
 void Game::Run() {
@@ -109,7 +108,6 @@ void Game::Update() {
         SDL_Delay(MILLIS_PER_FRAME - (SDL_GetTicks() - lastFrameTicks));
     }
     const auto deltaTime = static_cast<float>(SDL_GetTicks() - lastFrameTicks) / 1000.0f;
-    playerPosition += playerVelocity * deltaTime;
 
     registry->GetSystem<MovementSystem>().Update(deltaTime);
 
@@ -121,12 +119,7 @@ void Game::Render() const {
     SDL_RenderClear(renderer.get());
     // Render all game objects and UI
 
-    const auto surface = IMG_Load("./assets/images/tank-tiger-right.png");
-    const auto texture = SDL_CreateTextureFromSurface(renderer.get(), surface);
-    SDL_FreeSurface(surface);
-    const SDL_Rect dstRect{static_cast<int>(playerPosition.x), static_cast<int>(playerPosition.y), 64, 64};
-    SDL_RenderCopy(renderer.get(), texture, nullptr, &dstRect);
-    SDL_DestroyTexture(texture);
+    registry->GetSystem<RenderSystem>().Render(renderer.get());
 
     SDL_RenderPresent(renderer.get());
 }
