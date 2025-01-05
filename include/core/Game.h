@@ -2,7 +2,8 @@
 
 #include <memory>
 #include <SDL.h>
-#include "Core.h"
+#include "SmartPointers.h"
+#include "ecs/ECS.h"
 
 
 constexpr auto FPS = 60;
@@ -13,6 +14,7 @@ class Game {
     bool isRunning{false};
     Unique<SDL_Window> window;
     Unique<SDL_Renderer> renderer;
+    Unique<Registry> registry{new Registry()};
 
 public:
     int windowWidth{0};

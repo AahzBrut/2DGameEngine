@@ -39,12 +39,19 @@ FetchContent_MakeAvailable(SDL2 glm SDL2_image)
 add_executable(2DGameEngine src/main.cpp
         include/core/Game.h
         src/core/Game.cpp
-        include/core/Core.h
+        include/core/SmartPointers.h
         include/core/Logger.h
+        include/components/TransformComponent.h
+        include/systems/MovementSystem.h
+        include/ecs/ECS.h
+        include/core/Collections.h
+        src/ecs/ECS.cpp
 )
 
 target_link_libraries(2DGameEngine PRIVATE SDL2::SDL2main SDL2::SDL2-static glm SDL2_image::SDL2_image-static)
 target_include_directories(2DGameEngine PUBLIC include)
 
 
-file(COPY ${CMAKE_CURRENT_LIST_DIR}/assets DESTINATION ${CMAKE_CURRENT_BINARY_DIR})
+add_custom_command(TARGET 2DGameEngine POST_BUILD COMMAND
+        ${CMAKE_COMMAND} -E copy_directory_if_different
+        "${CMAKE_CURRENT_LIST_DIR}/assets" "${CMAKE_CURRENT_BINARY_DIR}/assets")

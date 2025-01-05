@@ -1,4 +1,10 @@
 #pragma once
+#include <chrono>
+#include <format>
+#include <iostream>
+#include <ostream>
+#include <string>
+
 
 #define RESET           "\033[0m"              /* Reset to system default */
 #define BLACK           "\033[30m"             /* Black */
@@ -18,6 +24,6 @@
 #define BOLD_CYAN       "\033[1m\033[36m"      /* Bold Cyan */
 #define BOLD_WHITE      "\033[1m\033[37m"      /* Bold White */
 
-#define LOG(M, ...) std::cout << BOLD_BLUE << floor<std::chrono::microseconds>(std::chrono::system_clock::now()) << " - INFO: " << std::format(M, ##__VA_ARGS__) << RESET << std::endl
+#define LOG(M, ...) std::cout << BOLD_BLUE << floor<std::chrono::microseconds>(std::chrono::system_clock::now()) << "(UTC) - INFO: " << std::format(M, ##__VA_ARGS__) << RESET << std::endl
 
-#define LOG_ERR(M, ...) std::cerr << floor<std::chrono::microseconds>(std::chrono::system_clock::now()) << " - ERROR: " << std::format(M, ##__VA_ARGS__) << std::endl
+#define LOG_ERR(M, ...) std::cerr << floor<std::chrono::microseconds>(std::chrono::system_clock::now()) << "(UTC) - ERROR: " << std::format(M, ##__VA_ARGS__) << std::endl

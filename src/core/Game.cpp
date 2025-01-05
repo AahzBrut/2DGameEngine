@@ -6,6 +6,7 @@
 #include <SDL.h>
 #include <SDL_image.h>
 
+#include "components/TransformComponent.h"
 #include "core/Logger.h"
 #include "glm/vec2.hpp"
 
@@ -60,12 +61,21 @@ glm::vec2 playerVelocity;
 void Game::Setup() {
     playerPosition = {10, 20};
     playerVelocity = {60, 0};
+
+    const auto tank = registry->CreateEntity();
+
+    registry->AddComponent<TransformComponent>(tank, glm::vec2{0,0}, glm::vec2{1,1}, 0.0);
+
+
+    const auto truck = registry->CreateEntity();
+
 }
 
 void Game::Run() {
     Setup();
     while (isRunning) {
         ProcessInput();
+        registry->Update();
         Update();
         Render();
     }
@@ -94,8 +104,7 @@ void Game::Update() {
         timeToWait <= MILLIS_PER_FRAME && timeToWait > 0) {
         SDL_Delay(MILLIS_PER_FRAME - (SDL_GetTicks() - lastFrameTicks));
     }
-    const auto deltaTime = (SDL_GetTicks() - lastFrameTicks) / 1000.0f;
-    LOG("Time to wait: {:.4f} ms", deltaTime);
+    const auto deltaTime = static_cast<float>(SDL_GetTicks() - lastFrameTicks) / 1000.0f;
     playerPosition += playerVelocity * deltaTime;
     lastFrameTicks = SDL_GetTicks();
 }
