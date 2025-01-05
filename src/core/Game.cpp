@@ -3,8 +3,7 @@
 #include <format>
 #include <iostream>
 #include <ostream>
-#include <SDL.h>
-#include <SDL_image.h>
+#include <SDL2/SDL.h>
 
 #include "components/SpriteComponent.h"
 #include "components/TransformComponent.h"
@@ -63,15 +62,15 @@ void Game::Setup() const {
     registry->AddSystem<MovementSystem>();
     registry->AddSystem<RenderSystem>();
 
-    auto tank = registry->CreateEntity();
-    tank.AddComponent<TransformComponent>(glm::vec2{0, 0}, glm::vec2{1, 1}, 0.0);
-    tank.AddComponent<VelocityComponent>(glm::vec2{10, 10});
-    tank.AddComponent<SpriteComponent>(glm::vec2{64, 64}, glm::vec4{0, 255, 0, 255});
+    registry->CreateEntity()
+            .AddComponent<TransformComponent>(glm::vec2{0, 0}, glm::vec2{1, 1}, 0.0)
+            .AddComponent<VelocityComponent>(glm::vec2{10, 10})
+            .AddComponent<SpriteComponent>(glm::vec2{64, 64}, glm::vec4{0, 255, 0, 255});
 
-     auto truck = registry->CreateEntity();
-    truck.AddComponent<TransformComponent>(glm::vec2{0, 0}, glm::vec2{1, 1}, 0.0);
-    truck.AddComponent<VelocityComponent>(glm::vec2{5, 0});
-    truck.AddComponent<SpriteComponent>(glm::vec2{32, 32}, glm::vec4{255, 0, 0, 255});
+    registry->CreateEntity()
+            .AddComponent<TransformComponent>(glm::vec2{0, 0}, glm::vec2{1, 1}, 0.0)
+            .AddComponent<VelocityComponent>(glm::vec2{5, 0})
+            .AddComponent<SpriteComponent>(glm::vec2{32, 32}, glm::vec4{255, 0, 0, 255});
 }
 
 void Game::Run() {

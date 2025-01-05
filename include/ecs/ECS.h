@@ -54,7 +54,7 @@ public:
     [[nodiscard]] bool BelongsToGroup(const std::string &group) const;
 
     template<typename TComponent, typename... TArgs>
-    void AddComponent(TArgs &&... args);
+    Entity& AddComponent(TArgs &&... args);
     template<typename TComponent>
     void RemoveComponent() const;
     template<typename TComponent>
@@ -218,7 +218,7 @@ public:
     void RemoveEntityGroup(const Entity &entity);
 
     template<typename TComponent, typename... TArgs>
-    void AddComponent(Entity entity, TArgs &&... args);
+    void AddComponent(const Entity& entity, TArgs &&... args);
     template<typename TComponent>
     void RemoveComponent(Entity entity);
     template<typename TComponent>
@@ -269,7 +269,7 @@ TSystem &Registry::GetSystem() const {
 }
 
 template<typename TComponent, typename... TArgs>
-void Registry::AddComponent(const Entity entity, TArgs &&... args) {
+void Registry::AddComponent(const Entity& entity, TArgs &&... args) {
     const auto componentId = Component<TComponent>::GetId();
     const auto entityId = entity.GetId();
 
@@ -323,8 +323,9 @@ TComponent &Registry::GetComponent(const Entity entity) const {
 }
 
 template<typename TComponent, typename... TArgs>
-void Entity::AddComponent(TArgs &&... args) {
+Entity& Entity::AddComponent(TArgs &&... args) {
     registry->AddComponent<TComponent>(*this, std::forward<TArgs>(args)...);
+    return *this;
 }
 
 template<typename TComponent>
