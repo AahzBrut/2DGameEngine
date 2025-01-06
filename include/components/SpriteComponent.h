@@ -9,12 +9,12 @@
 
 struct SpriteComponent : Component<SpriteComponent> {
     Sprite sprite;
-    glm::vec2 size;
+    SDL_Rect rect;
     glm::vec4 color;
 
     explicit SpriteComponent(
         Sprite sprite = Sprite{},
-        const glm::vec2 size = glm::vec2(0, 0),
+        const SDL_Rect& rect = {},
         const glm::vec4 color = glm::vec4(0, 0, 0, 255))
-        : sprite{std::move(sprite)}, size{size}, color{color} {}
+        : sprite{std::move(sprite)}, rect{rect}, color{color} {}
 };

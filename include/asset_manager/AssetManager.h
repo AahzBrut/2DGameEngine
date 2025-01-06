@@ -10,6 +10,7 @@ struct TextureDeleter {
     void operator()(SDL_Texture *pointer) const {
         if (pointer) {
             SDL_DestroyTexture(pointer);
+            LOG("Destroying texture");
         }
     }
 };

@@ -15,15 +15,14 @@ public:
             const auto &transform = entity.GetComponent<TransformComponent>();
             const auto &sprite = entity.GetComponent<SpriteComponent>();
 
-            SDL_Rect srcRect = {0,0, sprite.sprite.width, sprite.sprite.height};
             SDL_Rect dstRect = {
                 static_cast<int>(transform.position.x),
                 static_cast<int>(transform.position.y),
-                static_cast<int>(sprite.size.x * transform.scale.x),
-                static_cast<int>(sprite.size.y * transform.scale.y),
+                static_cast<int>(static_cast<float>(sprite.rect.w) * transform.scale.x),
+                static_cast<int>(static_cast<float>(sprite.rect.h) * transform.scale.y),
             };
 
-            SDL_RenderCopy(renderer.get(), sprite.sprite.texture.get(), &srcRect, &dstRect);
+            SDL_RenderCopy(renderer.get(), sprite.sprite.texture.get(), &sprite.rect, &dstRect);
         }
     }
 };
