@@ -10,13 +10,20 @@ public:
         RequireComponent<SpriteComponent>();
     }
 
-    void Render(SDL_Renderer *renderer) const {
+    void Render(const Unique<SDL_Renderer>& renderer) const {
         for (const auto &entity: GetSystemEntities()) {
             const auto &transform = entity.GetComponent<TransformComponent>();
             const auto &sprite = entity.GetComponent<SpriteComponent>();
-            SDL_Rect renderQuad{static_cast<int>(transform.position.x), static_cast<int>(transform.position.y), static_cast<int>(sprite.size.x), static_cast<int>(sprite.size.x)};
-            SDL_SetRenderDrawColor(renderer, sprite.color.r, sprite.color.g, sprite.color.b, sprite.color.a);
-            SDL_RenderFillRect(renderer, &renderQuad);
+
+            SDL_Rect srcRect = {0,0, sprite.sprite.width, sprite.sprite.height};
+            SDL_Rect dstRect = {
+                static_cast<int>(transform.position.x),
+                static_cast<int>(transform.position.y),
+                static_cast<int>(sprite.size.x),
+                static_cast<int>(sprite.size.y),
+            };
+
+            SDL_RenderCopy(renderer.get(), sprite.sprite.texture.get(), &srcRect, &dstRect);
         }
     }
 };

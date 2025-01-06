@@ -62,15 +62,18 @@ void Game::Setup() const {
     registry->AddSystem<MovementSystem>();
     registry->AddSystem<RenderSystem>();
 
+    assetManager->LoadTexture(renderer, "tank", "./assets/images/tank-panther-right.png");
+    assetManager->LoadTexture(renderer, "truck", "./assets/images/truck-ford-right.png");
+
     registry->CreateEntity()
             .AddComponent<TransformComponent>(glm::vec2{0, 0}, glm::vec2{1, 1}, 0.0)
             .AddComponent<VelocityComponent>(glm::vec2{10, 10})
-            .AddComponent<SpriteComponent>(glm::vec2{64, 64}, glm::vec4{0, 255, 0, 255});
+            .AddComponent<SpriteComponent>(assetManager->GetTexture("tank"), glm::vec2{64, 64}, glm::vec4{0, 255, 0, 255});
 
     registry->CreateEntity()
             .AddComponent<TransformComponent>(glm::vec2{0, 0}, glm::vec2{1, 1}, 0.0)
             .AddComponent<VelocityComponent>(glm::vec2{5, 0})
-            .AddComponent<SpriteComponent>(glm::vec2{32, 32}, glm::vec4{255, 0, 0, 255});
+            .AddComponent<SpriteComponent>(assetManager->GetTexture("truck"), glm::vec2{32, 32}, glm::vec4{255, 0, 0, 255});
 }
 
 void Game::Run() {
@@ -118,7 +121,7 @@ void Game::Render() const {
     SDL_RenderClear(renderer.get());
     // Render all game objects and UI
 
-    registry->GetSystem<RenderSystem>().Render(renderer.get());
+    registry->GetSystem<RenderSystem>().Render(renderer);
 
     SDL_RenderPresent(renderer.get());
 }

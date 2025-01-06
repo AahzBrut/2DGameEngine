@@ -3,6 +3,7 @@
 #include <memory>
 #include <SDL.h>
 #include "SmartPointers.h"
+#include "asset_manager/AssetManager.h"
 #include "ecs/ECS.h"
 
 
@@ -15,6 +16,7 @@ class Game {
     Unique<SDL_Window> window;
     Unique<SDL_Renderer> renderer;
     Unique<Registry> registry{new Registry()};
+    Unique<AssetManager> assetManager{new AssetManager()};
 
 public:
     int windowWidth{0};
