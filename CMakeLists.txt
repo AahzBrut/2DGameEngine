@@ -52,6 +52,8 @@ add_executable(2DGameEngine src/main.cpp
         include/asset_manager/AssetManager.h
         src/asset_manager/AssetManager.cpp
         include/data/Sprite.h
+        include/components/AnimationComponent.h
+        include/systems/AnimationSystem.h
 )
 
 target_link_libraries(2DGameEngine PRIVATE SDL2::SDL2main SDL2::SDL2-static glm SDL2_image::SDL2_image-static)

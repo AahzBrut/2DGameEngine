@@ -6,11 +6,13 @@
 #include <ostream>
 #include <SDL2/SDL.h>
 
+#include "components/AnimationComponent.h"
 #include "components/SpriteComponent.h"
 #include "components/TransformComponent.h"
 #include "components/VelocityComponent.h"
 #include "core/Logger.h"
 #include "glm/vec2.hpp"
+#include "systems/AnimationSystem.h"
 #include "systems/MovementSystem.h"
 #include "systems/RenderSystem.h"
 
@@ -60,13 +62,15 @@ void Game::Initialize() {
 }
 
 // ReSharper disable once CppMemberFunctionMayBeConst
-void Game::LoadLevel([[maybe_unused]]int level) {
+void Game::LoadLevel([[maybe_unused]] int level) {
     registry->AddSystem<MovementSystem>();
     registry->AddSystem<RenderSystem>();
+    registry->AddSystem<AnimationSystem>();
 
     assetManager->LoadTexture(renderer, "tank", "./assets/images/tank-panther-right.png");
     assetManager->LoadTexture(renderer, "truck", "./assets/images/truck-ford-right.png");
     assetManager->LoadTexture(renderer, "jungle-map", "./assets/tilemaps/jungle.png");
+    assetManager->LoadTexture(renderer, "chopper", "./assets/images/chopper.png");
 
     const auto &jungleMapSprite = assetManager->GetTexture("jungle-map");
     constexpr auto mapHeight = 20;
@@ -86,12 +90,12 @@ void Game::LoadLevel([[maybe_unused]]int level) {
             registry->CreateEntity()
                     .AddComponent<TransformComponent>(glm::vec2{x * tileScale * tileSize, y * tileScale * tileSize},
                                                       glm::vec2{tileScale, tileScale}, 0.0)
-                    .AddComponent<SpriteComponent>(jungleMapSprite, SDL_Rect{srcRectX, srcRectY, tileSize, tileSize}, SDL_Color{255,255,255,255}, 0);
+                    .AddComponent<SpriteComponent>(jungleMapSprite, SDL_Rect{srcRectX, srcRectY, tileSize, tileSize},
+                                                   SDL_Color{255, 255, 255, 255}, 0);
         }
     }
 
     mapFile.close();
-
 
     const auto &tankSprite = assetManager->GetTexture("tank");
     registry->CreateEntity()
@@ -106,6 +110,17 @@ void Game::LoadLevel([[maybe_unused]]int level) {
             .AddComponent<VelocityComponent>(glm::vec2{5, 0})
             .AddComponent<SpriteComponent>(truckSprite, SDL_Rect{0, 0, truckSprite.width, truckSprite.height},
                                            SDL_Color{255, 0, 0, 255}, 1);
+
+    const auto &chopperSprite = assetManager->GetTexture("chopper");
+    registry->CreateEntity()
+            .AddComponent<TransformComponent>(glm::vec2{100, 100}, glm::vec2{4, 4}, 0.0)
+            .AddComponent<VelocityComponent>(glm::vec2{0, -10})
+            .AddComponent<SpriteComponent>(chopperSprite, SDL_Rect{0, 0, chopperSprite.width, chopperSprite.height},
+                                           SDL_Color{0, 255, 0, 255}, 3)
+            .AddComponent<AnimationComponent>(List{
+                                                  SDL_Rect{0, 0, 32, 32},
+                                                  SDL_Rect{32, 0, 32, 32},
+                                              }, 0, 8.f, true, 0);
 }
 
 void Game::Setup() {
@@ -148,6 +163,7 @@ void Game::Update() {
     const auto deltaTime = static_cast<float>(SDL_GetTicks() - lastFrameTicks) / 1000.0f;
 
     registry->GetSystem<MovementSystem>().Update(deltaTime);
+    registry->GetSystem<AnimationSystem>().Update(deltaTime);
 
     lastFrameTicks = SDL_GetTicks();
 }
