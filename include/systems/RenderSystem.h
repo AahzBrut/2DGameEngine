@@ -10,19 +10,40 @@ public:
         RequireComponent<SpriteComponent>();
     }
 
-    void Render(const Unique<SDL_Renderer>& renderer) const {
-        for (const auto &entity: GetSystemEntities()) {
-            const auto &transform = entity.GetComponent<TransformComponent>();
-            const auto &sprite = entity.GetComponent<SpriteComponent>();
+    void Render(const Unique<SDL_Renderer> &renderer) const {
+        struct EntityTuple {
+            Entity entity;
+            TransformComponent* transform;
+            SpriteComponent* sprite;
+        };
+
+        List<EntityTuple> entityTuples;
+        for (auto &entity: GetSystemEntities()) {
+            entityTuples.emplace_back(EntityTuple{
+                entity,
+                &entity.GetComponent<TransformComponent>(),
+                &entity.GetComponent<SpriteComponent>()
+            });
+        }
+
+        std::sort(entityTuples.begin(), entityTuples.end(), [](const EntityTuple &a, const EntityTuple &b) {
+            return a.sprite->zIndex < b.sprite->zIndex;
+        });
+
+
+        for (const auto &tuple: entityTuples) {
+            const auto &transform = tuple.transform;
+            const auto &sprite = tuple.sprite;
 
             SDL_Rect dstRect = {
-                static_cast<int>(transform.position.x),
-                static_cast<int>(transform.position.y),
-                static_cast<int>(static_cast<float>(sprite.rect.w) * transform.scale.x),
-                static_cast<int>(static_cast<float>(sprite.rect.h) * transform.scale.y),
+                static_cast<int>(transform->position.x),
+                static_cast<int>(transform->position.y),
+                static_cast<int>(static_cast<float>(sprite->rect.w) * transform->scale.x),
+                static_cast<int>(static_cast<float>(sprite->rect.h) * transform->scale.y),
             };
 
-            SDL_RenderCopyEx(renderer.get(), sprite.sprite.texture.get(), &sprite.rect, &dstRect, transform.rotation, nullptr, SDL_FLIP_NONE);
+            SDL_RenderCopyEx(renderer.get(), sprite->sprite.texture.get(), &sprite->rect, &dstRect, transform->rotation,
+                             nullptr, SDL_FLIP_NONE);
         }
     }
 };

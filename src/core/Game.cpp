@@ -54,7 +54,7 @@ void Game::Initialize() {
     }
 
     //SDL_SetWindowFullscreen(window.get(), SDL_WINDOW_FULLSCREEN);
-    //SDL_GL_SetSwapInterval(0);
+    SDL_GL_SetSwapInterval(0);
 
     isRunning = true;
 }
@@ -85,7 +85,7 @@ void Game::LoadLevel(int level) {
             registry->CreateEntity()
                     .AddComponent<TransformComponent>(glm::vec2{x * tileScale * tileSize, y * tileScale * tileSize},
                                                       glm::vec2{tileScale, tileScale}, 0.0)
-                    .AddComponent<SpriteComponent>(jungleMapSprite, SDL_Rect{srcRectX, srcRectY, tileSize, tileSize});
+                    .AddComponent<SpriteComponent>(jungleMapSprite, SDL_Rect{srcRectX, srcRectY, tileSize, tileSize}, SDL_Color{255,255,255,255}, 0);
         }
     }
 
@@ -97,14 +97,14 @@ void Game::LoadLevel(int level) {
             .AddComponent<TransformComponent>(glm::vec2{0, 0}, glm::vec2{4, 4}, 0.0)
             .AddComponent<VelocityComponent>(glm::vec2{10, 10})
             .AddComponent<SpriteComponent>(tankSprite, SDL_Rect{0, 0, tankSprite.width, tankSprite.height},
-                                           SDL_Color{0, 255, 0, 255});
+                                           SDL_Color{0, 255, 0, 255}, 2);
 
     const auto &truckSprite = assetManager->GetTexture("truck");
     registry->CreateEntity()
             .AddComponent<TransformComponent>(glm::vec2{0, 0}, glm::vec2{4, 4}, 0.0)
             .AddComponent<VelocityComponent>(glm::vec2{5, 0})
             .AddComponent<SpriteComponent>(truckSprite, SDL_Rect{0, 0, truckSprite.width, truckSprite.height},
-                                           SDL_Color{255, 0, 0, 255});
+                                           SDL_Color{255, 0, 0, 255}, 1);
 }
 
 void Game::Setup() {

@@ -7,7 +7,7 @@
 #include "ecs/ECS.h"
 
 
-constexpr auto FPS = 60;
+constexpr auto FPS = 1000;
 constexpr auto MILLIS_PER_FRAME = 1000 / FPS;
 
 class Game {
