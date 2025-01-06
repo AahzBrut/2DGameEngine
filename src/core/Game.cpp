@@ -59,7 +59,8 @@ void Game::Initialize() {
     isRunning = true;
 }
 
-void Game::LoadLevel(int level) {
+// ReSharper disable once CppMemberFunctionMayBeConst
+void Game::LoadLevel([[maybe_unused]]int level) {
     registry->AddSystem<MovementSystem>();
     registry->AddSystem<RenderSystem>();
 
@@ -78,9 +79,9 @@ void Game::LoadLevel(int level) {
             constexpr auto tileSize = 32;
             char character;
             mapFile.get(character);
-            const auto srcRectY = tileSize * std::atoi(&character);
+            const auto srcRectY = tileSize * std::atoi(&character); // NOLINT(*-err34-c)
             mapFile.get(character);
-            const auto srcRectX = tileSize * std::atoi(&character);
+            const auto srcRectX = tileSize * std::atoi(&character); // NOLINT(*-err34-c)
             mapFile.ignore();
             registry->CreateEntity()
                     .AddComponent<TransformComponent>(glm::vec2{x * tileScale * tileSize, y * tileScale * tileSize},
