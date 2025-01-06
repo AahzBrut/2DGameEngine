@@ -67,13 +67,13 @@ void Game::Setup() const {
 
     const auto& tankSprite = assetManager->GetTexture("tank");
     registry->CreateEntity()
-            .AddComponent<TransformComponent>(glm::vec2{0, 0}, glm::vec2{4, 4}, 0.0)
+            .AddComponent<TransformComponent>(glm::vec2{0, 0}, glm::vec2{4, 4}, 45.0)
             .AddComponent<VelocityComponent>(glm::vec2{10, 10})
             .AddComponent<SpriteComponent>(tankSprite, SDL_Rect{0,0,tankSprite.width, tankSprite.height}, SDL_Color{0, 255, 0, 255});
 
     const auto& truckSprite = assetManager->GetTexture("truck");
     registry->CreateEntity()
-            .AddComponent<TransformComponent>(glm::vec2{0, 0}, glm::vec2{4, 4}, 0.0)
+            .AddComponent<TransformComponent>(glm::vec2{0, 0}, glm::vec2{4, 4}, 45.0)
             .AddComponent<VelocityComponent>(glm::vec2{5, 0})
             .AddComponent<SpriteComponent>(truckSprite, SDL_Rect{0,0,truckSprite.width, truckSprite.height}, SDL_Color{255, 0, 0, 255});
 }

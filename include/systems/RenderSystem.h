@@ -22,7 +22,7 @@ public:
                 static_cast<int>(static_cast<float>(sprite.rect.h) * transform.scale.y),
             };
 
-            SDL_RenderCopy(renderer.get(), sprite.sprite.texture.get(), &sprite.rect, &dstRect);
+            SDL_RenderCopyEx(renderer.get(), sprite.sprite.texture.get(), &sprite.rect, &dstRect, transform.rotation, nullptr, SDL_FLIP_NONE);
         }
     }
 };
