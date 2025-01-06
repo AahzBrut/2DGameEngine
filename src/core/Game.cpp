@@ -65,17 +65,17 @@ void Game::Setup() const {
     assetManager->LoadTexture(renderer, "tank", "./assets/images/tank-panther-right.png");
     assetManager->LoadTexture(renderer, "truck", "./assets/images/truck-ford-right.png");
 
-    const auto tankSprite = assetManager->GetTexture("tank");
+    const auto& tankSprite = assetManager->GetTexture("tank");
     registry->CreateEntity()
             .AddComponent<TransformComponent>(glm::vec2{0, 0}, glm::vec2{4, 4}, 0.0)
             .AddComponent<VelocityComponent>(glm::vec2{10, 10})
-            .AddComponent<SpriteComponent>(tankSprite, SDL_Rect{0,0,tankSprite.width, tankSprite.height}, glm::vec4{0, 255, 0, 255});
+            .AddComponent<SpriteComponent>(tankSprite, SDL_Rect{0,0,tankSprite.width, tankSprite.height}, SDL_Color{0, 255, 0, 255});
 
-    const auto truckSprite = assetManager->GetTexture("truck");
+    const auto& truckSprite = assetManager->GetTexture("truck");
     registry->CreateEntity()
             .AddComponent<TransformComponent>(glm::vec2{0, 0}, glm::vec2{4, 4}, 0.0)
             .AddComponent<VelocityComponent>(glm::vec2{5, 0})
-            .AddComponent<SpriteComponent>(truckSprite, SDL_Rect{0,0,truckSprite.width, truckSprite.height}, glm::vec4{255, 0, 0, 255});
+            .AddComponent<SpriteComponent>(truckSprite, SDL_Rect{0,0,truckSprite.width, truckSprite.height}, SDL_Color{255, 0, 0, 255});
 }
 
 void Game::Run() {
