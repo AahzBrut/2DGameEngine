@@ -1,6 +1,7 @@
 #include "core/Game.h"
 
 #include <format>
+#include <fstream>
 #include <iostream>
 #include <ostream>
 #include <SDL2/SDL.h>
@@ -58,24 +59,56 @@ void Game::Initialize() {
     isRunning = true;
 }
 
-void Game::Setup() const {
+void Game::LoadLevel(int level) {
     registry->AddSystem<MovementSystem>();
     registry->AddSystem<RenderSystem>();
 
     assetManager->LoadTexture(renderer, "tank", "./assets/images/tank-panther-right.png");
     assetManager->LoadTexture(renderer, "truck", "./assets/images/truck-ford-right.png");
+    assetManager->LoadTexture(renderer, "jungle-map", "./assets/tilemaps/jungle.png");
 
-    const auto& tankSprite = assetManager->GetTexture("tank");
+    const auto &jungleMapSprite = assetManager->GetTexture("jungle-map");
+    constexpr auto mapHeight = 20;
+    std::fstream mapFile;
+    mapFile.open("./assets/tilemaps/jungle.map");
+    for (auto y = 0; y < mapHeight; y++) {
+        constexpr auto mapWidth = 25;
+        for (auto x = 0; x < mapWidth; x++) {
+            constexpr auto tileScale = 1.0;
+            constexpr auto tileSize = 32;
+            char character;
+            mapFile.get(character);
+            const auto srcRectY = tileSize * std::atoi(&character);
+            mapFile.get(character);
+            const auto srcRectX = tileSize * std::atoi(&character);
+            mapFile.ignore();
+            registry->CreateEntity()
+                    .AddComponent<TransformComponent>(glm::vec2{x * tileScale * tileSize, y * tileScale * tileSize},
+                                                      glm::vec2{tileScale, tileScale}, 0.0)
+                    .AddComponent<SpriteComponent>(jungleMapSprite, SDL_Rect{srcRectX, srcRectY, tileSize, tileSize});
+        }
+    }
+
+    mapFile.close();
+
+
+    const auto &tankSprite = assetManager->GetTexture("tank");
     registry->CreateEntity()
-            .AddComponent<TransformComponent>(glm::vec2{0, 0}, glm::vec2{4, 4}, 45.0)
+            .AddComponent<TransformComponent>(glm::vec2{0, 0}, glm::vec2{4, 4}, 0.0)
             .AddComponent<VelocityComponent>(glm::vec2{10, 10})
-            .AddComponent<SpriteComponent>(tankSprite, SDL_Rect{0,0,tankSprite.width, tankSprite.height}, SDL_Color{0, 255, 0, 255});
+            .AddComponent<SpriteComponent>(tankSprite, SDL_Rect{0, 0, tankSprite.width, tankSprite.height},
+                                           SDL_Color{0, 255, 0, 255});
 
-    const auto& truckSprite = assetManager->GetTexture("truck");
+    const auto &truckSprite = assetManager->GetTexture("truck");
     registry->CreateEntity()
-            .AddComponent<TransformComponent>(glm::vec2{0, 0}, glm::vec2{4, 4}, 45.0)
+            .AddComponent<TransformComponent>(glm::vec2{0, 0}, glm::vec2{4, 4}, 0.0)
             .AddComponent<VelocityComponent>(glm::vec2{5, 0})
-            .AddComponent<SpriteComponent>(truckSprite, SDL_Rect{0,0,truckSprite.width, truckSprite.height}, SDL_Color{255, 0, 0, 255});
+            .AddComponent<SpriteComponent>(truckSprite, SDL_Rect{0, 0, truckSprite.width, truckSprite.height},
+                                           SDL_Color{255, 0, 0, 255});
+}
+
+void Game::Setup() {
+    LoadLevel(1);
 }
 
 void Game::Run() {
@@ -119,7 +152,7 @@ void Game::Update() {
 }
 
 void Game::Render() const {
-    SDL_SetRenderDrawColor(renderer.get(), 0, 0, 64, 255);
+    SDL_SetRenderDrawColor(renderer.get(), 63, 63, 63, 255);
     SDL_RenderClear(renderer.get());
     // Render all game objects and UI
 

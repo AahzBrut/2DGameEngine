@@ -26,7 +26,8 @@ public:
     ~Game();
 
     void Initialize();
-    void Setup() const;
+    void LoadLevel(int level);
+    void Setup();
     void Run();
 
     void ProcessInput();
