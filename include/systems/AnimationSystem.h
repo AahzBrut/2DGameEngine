@@ -17,13 +17,10 @@ public:
             auto &sprite = entity.GetComponent<SpriteComponent>();
 
             const auto currentTicks = SDL_GetTicks();
-            const auto ticksPassed = currentTicks - animation.startTime;
-            const auto framesPassed = static_cast<int>(ticksPassed / animation.delayBetweenFrames);
+            const auto framesPassed = static_cast<int>((currentTicks - animation.startTime) / animation.delayBetweenFrames);
             animation.currentFrame = framesPassed % static_cast<int>(animation.frames.size());
 
             sprite.rect = animation.frames[animation.currentFrame];
-
-            LOG("ANIMATION SYSTEM UPDATE");
         }
     }
 };

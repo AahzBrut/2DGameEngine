@@ -71,6 +71,7 @@ void Game::LoadLevel([[maybe_unused]] int level) {
     assetManager->LoadTexture(renderer, "truck", "./assets/images/truck-ford-right.png");
     assetManager->LoadTexture(renderer, "jungle-map", "./assets/tilemaps/jungle.png");
     assetManager->LoadTexture(renderer, "chopper", "./assets/images/chopper.png");
+    assetManager->LoadTexture(renderer, "radar", "./assets/images/radar.png");
 
     const auto &jungleMapSprite = assetManager->GetTexture("jungle-map");
     constexpr auto mapHeight = 20;
@@ -120,6 +121,22 @@ void Game::LoadLevel([[maybe_unused]] int level) {
             .AddComponent<AnimationComponent>(List{
                                                   SDL_Rect{0, 0, 32, 32},
                                                   SDL_Rect{32, 0, 32, 32},
+                                              }, 0, 8.f, true, 0);
+
+    const auto &radarSprite = assetManager->GetTexture("radar");
+    registry->CreateEntity()
+            .AddComponent<TransformComponent>(glm::vec2{windowWidth - 72, 8}, glm::vec2{1, 1}, 0.0)
+            .AddComponent<SpriteComponent>(radarSprite, SDL_Rect{0, 0, radarSprite.width, radarSprite.height},
+                                           SDL_Color{0, 255, 0, 255}, 3)
+            .AddComponent<AnimationComponent>(List{
+                                                  SDL_Rect{0, 0, 64, 64},
+                                                  SDL_Rect{64, 0, 64, 64},
+                                                  SDL_Rect{128, 0, 64, 64},
+                                                  SDL_Rect{192, 0, 64, 64},
+                                                  SDL_Rect{256, 0, 64, 64},
+                                                  SDL_Rect{320, 0, 64, 64},
+                                                  SDL_Rect{384, 0, 64, 64},
+                                                  SDL_Rect{448, 0, 64, 64},
                                               }, 0, 8.f, true, 0);
 }
 
