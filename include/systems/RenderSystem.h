@@ -19,8 +19,8 @@ public:
             SDL_Rect dstRect = {
                 static_cast<int>(transform.position.x),
                 static_cast<int>(transform.position.y),
-                static_cast<int>(sprite.size.x),
-                static_cast<int>(sprite.size.y),
+                static_cast<int>(sprite.size.x * transform.scale.x),
+                static_cast<int>(sprite.size.y * transform.scale.y),
             };
 
             SDL_RenderCopy(renderer.get(), sprite.sprite.texture.get(), &srcRect, &dstRect);
