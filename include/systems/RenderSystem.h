@@ -45,8 +45,8 @@ public:
 
             SDL_SetTextureColorMod(texture, sprite->color.r, sprite->color.g, sprite->color.b);
             SDL_SetTextureAlphaMod(texture, sprite->color.a);
-            SDL_RenderCopyEx(renderer.get(), texture, &sprite->rect, &dstRect, transform->rotation,
-                             nullptr, SDL_FLIP_NONE);
+            SDL_RenderCopyEx(renderer.get(), texture, &sprite->rect, &dstRect, transform->rotation, nullptr,
+                             SDL_FLIP_NONE);
         }
     }
 };

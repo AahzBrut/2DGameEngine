@@ -23,8 +23,8 @@ public:
 
         for (auto it = entities.begin(); it != entities.end(); ++it) {
             const auto currentEntity = *it;
-            const auto firstCollider = currentEntity.GetComponent<BoxColliderComponent>();
-            const auto firstTransform = currentEntity.GetComponent<TransformComponent>();
+            const auto& firstCollider = currentEntity.GetComponent<BoxColliderComponent>();
+            const auto& firstTransform = currentEntity.GetComponent<TransformComponent>();
             const auto firstRect = SDL_Rect{
                 static_cast<int>(firstTransform.position.x + firstCollider.offset.x * firstTransform.scale.x),
                 static_cast<int>(firstTransform.position.y + firstCollider.offset.y * firstTransform.scale.y),
@@ -33,8 +33,8 @@ public:
             };
             for (auto inner = it + 1; inner != entities.end(); ++inner) {
                 const auto otherEntity = *inner;
-                const auto secondCollider = otherEntity.GetComponent<BoxColliderComponent>();
-                const auto secondTransform = otherEntity.GetComponent<TransformComponent>();
+                const auto& secondCollider = otherEntity.GetComponent<BoxColliderComponent>();
+                const auto& secondTransform = otherEntity.GetComponent<TransformComponent>();
                 const auto secondRect = SDL_Rect{
                     static_cast<int>(secondTransform.position.x + secondCollider.offset.x * secondTransform.scale.x),
                     static_cast<int>(secondTransform.position.y + secondCollider.offset.y * secondTransform.scale.y),
