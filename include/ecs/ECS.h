@@ -247,7 +247,7 @@ void System::RequireComponent() {
 
 template<typename TSystem, typename... TArgs>
 void Registry::AddSystem(TArgs &&... args) {
-    Shared<TSystem> newSystem = std::make_shared<TSystem>(std::forward<TArgs>(args)...);
+    Shared<TSystem> newSystem = std::make_shared<TSystem>(args...);
     systems.insert(std::make_pair(std::type_index(typeid(TSystem)), newSystem));
 }
 
@@ -284,7 +284,7 @@ void Registry::AddComponent(const Entity& entity, TArgs &&... args) {
 
     Shared<Pool<TComponent> > componentPool = std::static_pointer_cast<Pool<TComponent> >(componentPools[componentId]);
 
-    TComponent newComponent(std::forward<TArgs>(args)...);
+    TComponent newComponent(args...);
 
     componentPool->Set(entityId, newComponent);
 
@@ -324,7 +324,7 @@ TComponent &Registry::GetComponent(const Entity entity) const {
 
 template<typename TComponent, typename... TArgs>
 Entity& Entity::AddComponent(TArgs &&... args) {
-    registry->AddComponent<TComponent>(*this, std::forward<TArgs>(args)...);
+    registry->AddComponent<TComponent>(*this, args...);
     return *this;
 }
 

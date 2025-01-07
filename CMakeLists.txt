@@ -54,6 +54,9 @@ add_executable(2DGameEngine src/main.cpp
         include/data/Sprite.h
         include/components/AnimationComponent.h
         include/systems/AnimationSystem.h
+        include/components/BoxColliderComponent.h
+        include/systems/CollisionSystem.h
+        include/systems/RenderColliderSystem.h
 )
 
 target_link_libraries(2DGameEngine PRIVATE SDL2::SDL2main SDL2::SDL2-static glm SDL2_image::SDL2_image-static)

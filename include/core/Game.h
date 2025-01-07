@@ -13,6 +13,7 @@ constexpr auto MILLIS_PER_FRAME = 1000 / FPS;
 class Game {
     Uint32 lastFrameTicks{0};
     bool isRunning{false};
+    bool isDebugMode{false};
     Unique<SDL_Window> window;
     Unique<SDL_Renderer> renderer;
     Unique<Registry> registry{new Registry()};
