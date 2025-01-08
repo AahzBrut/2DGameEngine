@@ -44,7 +44,6 @@ public:
                 };
 
                 if (IsIntersects(firstRect, secondRect)) {
-                    LOG("Entities Collides: {} and {}", currentEntity.GetId(), otherEntity.GetId());
                     eventBus->EmitEvent<CollisionEvent>(currentEntity, otherEntity);
                 }
             }

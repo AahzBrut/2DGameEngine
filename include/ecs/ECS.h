@@ -289,8 +289,6 @@ void Registry::AddComponent(const Entity& entity, TArgs &&... args) {
     componentPool->Set(entityId, newComponent);
 
     entityComponentSignatures[entityId].set(componentId);
-
-    LOG("Component {}, with id = {} was added to entity id {}", typeid(TComponent).name(), componentId, entityId);
 }
 
 template<typename TComponent>
@@ -303,8 +301,6 @@ void Registry::RemoveComponent(const Entity entity) {
     componentPool->Remove(entityId);
 
     entityComponentSignatures[entityId].set(componentId, false);
-
-    LOG("Component {} with id: {} was removed from entity with id: {}", typeid(TComponent).name(), componentId, entityId);
 }
 
 template<typename TComponent>

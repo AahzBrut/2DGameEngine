@@ -15,6 +15,7 @@
 #include "glm/vec2.hpp"
 #include "systems/AnimationSystem.h"
 #include "systems/CollisionSystem.h"
+#include "systems/KeyboardControlSystem.h"
 #include "systems/MovementSystem.h"
 #include "systems/RenderColliderSystem.h"
 #include "systems/RenderSystem.h"
@@ -71,6 +72,7 @@ void Game::LoadLevel([[maybe_unused]] int level) {
     registry->AddSystem<AnimationSystem>();
     registry->AddSystem<CollisionSystem>();
     registry->AddSystem<RenderColliderSystem>();
+    registry->AddSystem<KeyboardControlSystem>(eventBus);
 
     assetManager->LoadTexture(renderer, "tank", "./assets/images/tank-panther-right.png");
     assetManager->LoadTexture(renderer, "truck", "./assets/images/truck-ford-right.png");
@@ -181,6 +183,7 @@ void Game::ProcessInput() {
                 if (event.key.keysym.sym == SDLK_d) {
                     isDebugMode = !isDebugMode;
                 }
+                eventBus->EmitEvent<KeyPressedEvent>(event.key.keysym.sym);
             default:
                 break;
         }

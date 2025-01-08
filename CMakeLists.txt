@@ -60,6 +60,8 @@ add_executable(2DGameEngine src/main.cpp
         include/events/CollisionEvent.h
         include/event_bus/EventBus.h
         include/event_bus/Event.h
+        include/events/KeyPressedEvent.h
+        include/systems/KeyboardControlSystem.h
 )
 
 target_link_libraries(2DGameEngine PRIVATE SDL2::SDL2main SDL2::SDL2-static glm SDL2_image::SDL2_image-static)
