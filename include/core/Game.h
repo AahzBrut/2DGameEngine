@@ -5,6 +5,7 @@
 #include "SmartPointers.h"
 #include "asset_manager/AssetManager.h"
 #include "ecs/ECS.h"
+#include "event_bus/EventBus.h"
 
 
 constexpr auto FPS = 1000;
@@ -18,6 +19,7 @@ class Game {
     Unique<SDL_Renderer> renderer;
     Unique<Registry> registry{new Registry()};
     Unique<AssetManager> assetManager{new AssetManager()};
+    Unique<EventBus> eventBus{new EventBus()};
 
 public:
     int windowWidth{0};

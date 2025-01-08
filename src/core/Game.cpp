@@ -196,7 +196,7 @@ void Game::Update() {
 
     registry->GetSystem<MovementSystem>().Update(deltaTime);
     registry->GetSystem<AnimationSystem>().Update(deltaTime);
-    registry->GetSystem<CollisionSystem>().Update();
+    registry->GetSystem<CollisionSystem>().Update(eventBus);
 
     lastFrameTicks = SDL_GetTicks();
 }

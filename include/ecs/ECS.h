@@ -45,7 +45,7 @@ public:
 
     explicit Entity(const int id): id{id}, registry{nullptr} {}
     Entity(const Entity &entity) = default;
-    void Kill() const;
+    void Destroy() const;
     [[nodiscard]] int GetId() const;
 
     void Tag(const std::string &tag) const;
@@ -191,7 +191,7 @@ class Registry : public std::enable_shared_from_this<Registry> {
     Dictionary<std::string, std::set<Entity> > entitiesPerGroup;
     Dictionary<int, std::string> groupPerEntity;
 
-    std::deque<int> freeIds{};
+    Deque<int> freeIds;
 
 public:
     Registry() {
@@ -205,7 +205,7 @@ public:
     void Update();
 
     Entity CreateEntity();
-    void KillEntity(const Entity &entity);
+    void DestroyEntity(const Entity &entity);
 
     void TagEntity(Entity entity, const std::string &tag);
     bool EntityHasTag(const Entity &entity, const std::string &tag) const;

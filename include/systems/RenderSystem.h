@@ -30,7 +30,6 @@ public:
             return a.sprite->zIndex < b.sprite->zIndex;
         });
 
-
         for (const auto &tuple: entityTuples) {
             const auto &transform = tuple.transform;
             const auto &sprite = tuple.sprite;

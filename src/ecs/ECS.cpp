@@ -10,8 +10,8 @@ int Entity::GetId() const {
     return id;
 }
 
-void Entity::Kill() const {
-    registry->KillEntity(*this);
+void Entity::Destroy() const {
+    registry->DestroyEntity(*this);
 }
 
 void Entity::Tag(const std::string &tag) const {
@@ -69,7 +69,7 @@ Entity Registry::CreateEntity() {
     return entity;
 }
 
-void Registry::KillEntity(const Entity &entity) {
+void Registry::DestroyEntity(const Entity &entity) {
     entitiesToBeKilled.insert(entity);
     LOG("Entity with id: {} was killed", entity.GetId());
 }
@@ -124,9 +124,7 @@ void Registry::GroupEntity(Entity entity, const std::string &group) {
 }
 
 bool Registry::EntityBelongsToGroup(const Entity &entity, const std::string &group) const {
-    if (!entitiesPerGroup.contains(group)) {
-        return false;
-    }
+    if (!entitiesPerGroup.contains(group)) return false;
     const auto groupEntities = entitiesPerGroup.at(group);
     return groupEntities.contains(entity);
 }
@@ -157,10 +155,8 @@ void Registry::Update() {
         RemoveEntityFromSystems(entity);
         entityComponentSignatures[entity.GetId()].reset();
 
-        for (const auto& pool: componentPools) {
-            if (pool) {
-                pool->RemoveEntityFromPool(entity.GetId());
-            }
+        for (const auto &pool: componentPools) {
+            if (pool) pool->RemoveEntityFromPool(entity.GetId());
         }
 
         freeIds.push_back(entity.GetId());

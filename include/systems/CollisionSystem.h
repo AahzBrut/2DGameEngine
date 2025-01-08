@@ -2,11 +2,12 @@
 #include "components/BoxColliderComponent.h"
 #include "components/TransformComponent.h"
 #include "ecs/ECS.h"
+#include "events/CollisionEvent.h"
 
 
 class CollisionSystem : public System {
 public:
-    CollisionSystem() {
+    explicit CollisionSystem() {
         RequireComponent<TransformComponent>();
         RequireComponent<BoxColliderComponent>();
     }
@@ -18,7 +19,7 @@ public:
                firstRect.y + firstRect.h > secondRect.y;
     }
 
-    void Update() const {
+    void Update(const Unique<EventBus>& eventBus) const {
         auto entities = GetSystemEntities();
 
         for (auto it = entities.begin(); it != entities.end(); ++it) {
@@ -44,6 +45,7 @@ public:
 
                 if (IsIntersects(firstRect, secondRect)) {
                     LOG("Entities Collides: {} and {}", currentEntity.GetId(), otherEntity.GetId());
+                    eventBus->EmitEvent<CollisionEvent>(currentEntity, otherEntity);
                 }
             }
         }

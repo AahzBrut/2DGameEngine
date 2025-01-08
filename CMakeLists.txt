@@ -57,6 +57,9 @@ add_executable(2DGameEngine src/main.cpp
         include/components/BoxColliderComponent.h
         include/systems/CollisionSystem.h
         include/systems/RenderColliderSystem.h
+        include/events/CollisionEvent.h
+        include/event_bus/EventBus.h
+        include/event_bus/Event.h
 )
 
 target_link_libraries(2DGameEngine PRIVATE SDL2::SDL2main SDL2::SDL2-static glm SDL2_image::SDL2_image-static)

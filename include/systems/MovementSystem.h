@@ -16,8 +16,6 @@ public:
             auto& transform = entity.GetComponent<TransformComponent>();
             const auto& velocity = entity.GetComponent<VelocityComponent>();
             transform.position += velocity.velocity * deltaTime;
-
-            LOG("Entity {} moved to ({}, {})", entity.GetId(), transform.position.x, transform.position.y);
         }
     }
 };

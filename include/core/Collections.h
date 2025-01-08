@@ -1,5 +1,6 @@
 #pragma once
 
+#include <deque>
 #include <map>
 #include <unordered_map>
 #include <unordered_set>
@@ -20,3 +21,6 @@ using Dictionary = std::unordered_map<Key, Value, Hasher>;
 
 template<typename T>
 using Set = std::unordered_set<T>;
+
+template<typename T>
+using Deque = std::deque<T>;
