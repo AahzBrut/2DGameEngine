@@ -62,6 +62,7 @@ add_executable(2DGameEngine src/main.cpp
         include/event_bus/Event.h
         include/events/KeyPressedEvent.h
         include/systems/KeyboardControlSystem.h
+        include/components/KeyboardControlComponent.h
 )
 
 target_link_libraries(2DGameEngine PRIVATE SDL2::SDL2main SDL2::SDL2-static glm SDL2_image::SDL2_image-static)
