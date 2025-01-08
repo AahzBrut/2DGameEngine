@@ -64,14 +64,12 @@ Entity Registry::CreateEntity() {
     Entity entity(entityId);
     entity.registry = this;
     entitiesToBeAdded.insert(entity);
-    LOG("Entity created with id: {}", entityId);
 
     return entity;
 }
 
 void Registry::DestroyEntity(const Entity &entity) {
     entitiesToBeKilled.insert(entity);
-    LOG("Entity with id: {} was killed", entity.GetId());
 }
 
 void Registry::AddEntityToSystems(const Entity &entity) const {

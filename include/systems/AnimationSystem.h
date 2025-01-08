@@ -18,9 +18,10 @@ public:
 
             const auto currentTicks = SDL_GetTicks();
             const auto framesPassed = static_cast<int>((currentTicks - animation.startTime) / animation.delayBetweenFrames);
-            animation.currentFrame = framesPassed % static_cast<int>(animation.frames.size());
+            const auto frameCount = animation.frames[animation.currentSequence].size();
+            animation.currentFrame = framesPassed % static_cast<int>(frameCount);
 
-            sprite.rect = animation.frames[animation.currentFrame];
+            sprite.rect = animation.frames[animation.currentSequence][animation.currentFrame];
         }
     }
 };

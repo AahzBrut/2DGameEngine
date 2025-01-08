@@ -133,25 +133,29 @@ void Game::LoadLevel([[maybe_unused]] int level) {
             .AddComponent<VelocityComponent>(glm::vec2{0, -10})
             .AddComponent<SpriteComponent>(chopperSprite, SDL_Rect{0, 0, chopperSprite.width, chopperSprite.height}, 3)
             .AddComponent<BoxColliderComponent>(32, 32)
-            .AddComponent<AnimationComponent>(List{
-                                                  SDL_Rect{0, 0, 32, 32},
-                                                  SDL_Rect{32, 0, 32, 32},
-                                              }, 0, 8.f, true, 0);
+            .AddComponent<AnimationComponent>(List<List<SDL_Rect> >{
+                                                  List{
+                                                      SDL_Rect{0, 0, 32, 32},
+                                                      SDL_Rect{32, 0, 32, 32},
+                                                  }
+                                              }, 0, 0, 8.f, true, 0);
 
     const auto &radarSprite = assetManager->GetTexture("radar");
     registry->CreateEntity()
             .AddComponent<TransformComponent>(glm::vec2{windowWidth - 72, 8}, glm::vec2{1, 1}, 0.0)
             .AddComponent<SpriteComponent>(radarSprite, SDL_Rect{0, 0, radarSprite.width, radarSprite.height}, 3)
-            .AddComponent<AnimationComponent>(List{
-                                                  SDL_Rect{0, 0, 64, 64},
-                                                  SDL_Rect{64, 0, 64, 64},
-                                                  SDL_Rect{128, 0, 64, 64},
-                                                  SDL_Rect{192, 0, 64, 64},
-                                                  SDL_Rect{256, 0, 64, 64},
-                                                  SDL_Rect{320, 0, 64, 64},
-                                                  SDL_Rect{384, 0, 64, 64},
-                                                  SDL_Rect{448, 0, 64, 64},
-                                              }, 0, 8.f, true, 0);
+            .AddComponent<AnimationComponent>(List<List<SDL_Rect> >{
+                                                  List{
+                                                      SDL_Rect{0, 0, 64, 64},
+                                                      SDL_Rect{64, 0, 64, 64},
+                                                      SDL_Rect{128, 0, 64, 64},
+                                                      SDL_Rect{192, 0, 64, 64},
+                                                      SDL_Rect{256, 0, 64, 64},
+                                                      SDL_Rect{320, 0, 64, 64},
+                                                      SDL_Rect{384, 0, 64, 64},
+                                                      SDL_Rect{448, 0, 64, 64},
+                                                  }
+                                              }, 0, 0, 8.f, true, 0);
 }
 
 void Game::Setup() {
