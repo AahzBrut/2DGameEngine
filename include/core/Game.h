@@ -15,6 +15,7 @@ class Game {
     Uint32 lastFrameTicks{0};
     bool isRunning{false};
     bool isDebugMode{false};
+    SDL_Rect camera{};
     Unique<SDL_Window> window;
     Unique<SDL_Renderer> renderer;
     Unique<Registry> registry{new Registry()};
@@ -22,8 +23,10 @@ class Game {
     Unique<EventBus> eventBus{new EventBus()};
 
 public:
-    int windowWidth{0};
-    int windowHeight{0};
+    static int windowWidth;
+    static int windowHeight;
+    static int mapWidth;
+    static int mapHeight;
 
     Game();
     ~Game();

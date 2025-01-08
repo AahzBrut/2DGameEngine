@@ -8,18 +8,25 @@
 
 #include "components/AnimationComponent.h"
 #include "components/BoxColliderComponent.h"
+#include "components/CameraFollowComponent.h"
 #include "components/SpriteComponent.h"
 #include "components/TransformComponent.h"
 #include "components/VelocityComponent.h"
 #include "core/Logger.h"
 #include "glm/vec2.hpp"
 #include "systems/AnimationSystem.h"
+#include "systems/CameraMovementSystem.h"
 #include "systems/CollisionSystem.h"
 #include "systems/KeyboardControlSystem.h"
 #include "systems/MovementSystem.h"
 #include "systems/RenderColliderSystem.h"
 #include "systems/RenderSystem.h"
 
+
+int Game::windowWidth = 0;
+int Game::windowHeight = 0;
+int Game::mapWidth = 0;
+int Game::mapHeight = 0;
 
 Game::Game() {
     LOG("Game constructor called.");
@@ -62,6 +69,8 @@ void Game::Initialize() {
     //SDL_SetWindowFullscreen(window.get(), SDL_WINDOW_FULLSCREEN);
     SDL_GL_SetSwapInterval(0);
 
+    camera = {0, 0, windowWidth, windowHeight};
+
     isRunning = true;
 }
 
@@ -73,6 +82,7 @@ void Game::LoadLevel([[maybe_unused]] int level) {
     registry->AddSystem<CollisionSystem>();
     registry->AddSystem<RenderColliderSystem>();
     registry->AddSystem<KeyboardControlSystem>(eventBus);
+    registry->AddSystem<CameraMovementSystem>();
 
     assetManager->LoadTexture(renderer, "tank", "./assets/images/tank-panther-right.png");
     assetManager->LoadTexture(renderer, "truck", "./assets/images/truck-ford-right.png");
@@ -81,14 +91,14 @@ void Game::LoadLevel([[maybe_unused]] int level) {
     assetManager->LoadTexture(renderer, "radar", "./assets/images/radar.png");
 
     const auto &jungleMapSprite = assetManager->GetTexture("jungle-map");
-    constexpr auto mapHeight = 20;
+    mapHeight = 20;
     std::fstream mapFile;
+    mapWidth = 25;
+    constexpr auto tileScale = 2.0;
+    constexpr auto tileSize = 32;
     mapFile.open("./assets/tilemaps/jungle.map");
     for (auto y = 0; y < mapHeight; y++) {
-        constexpr auto mapWidth = 25;
         for (auto x = 0; x < mapWidth; x++) {
-            constexpr auto tileScale = 2.0;
-            constexpr auto tileSize = 32;
             char character;
             mapFile.get(character);
             const auto srcRectY = tileSize * std::atoi(&character); // NOLINT(*-err34-c)
@@ -102,6 +112,8 @@ void Game::LoadLevel([[maybe_unused]] int level) {
                                                    0);
         }
     }
+    mapHeight = mapHeight * tileSize * tileScale;
+    mapWidth = mapWidth * tileSize * tileScale;
 
     mapFile.close();
 
@@ -133,7 +145,9 @@ void Game::LoadLevel([[maybe_unused]] int level) {
             .AddComponent<VelocityComponent>(glm::vec2{0, 0})
             .AddComponent<SpriteComponent>(chopperSprite, SDL_Rect{0, 0, chopperSprite.width, chopperSprite.height}, 3)
             .AddComponent<BoxColliderComponent>(32, 32)
-            .AddComponent<KeyboardControlComponent>(glm::vec2{0, -40}, glm::vec2{40,0}, glm::vec2{0, 40}, glm::vec2{-40, 0})
+            .AddComponent<KeyboardControlComponent>(glm::vec2{0, -80}, glm::vec2{80, 0}, glm::vec2{0, 80},
+                                                    glm::vec2{-80, 0})
+            .AddComponent<CameraFollowComponent>()
             .AddComponent<AnimationComponent>(List{
                                                   List{
                                                       SDL_Rect{0, 0, 32, 32},
@@ -156,7 +170,7 @@ void Game::LoadLevel([[maybe_unused]] int level) {
     const auto &radarSprite = assetManager->GetTexture("radar");
     registry->CreateEntity()
             .AddComponent<TransformComponent>(glm::vec2{windowWidth - 72, 8}, glm::vec2{1, 1}, 0.0)
-            .AddComponent<SpriteComponent>(radarSprite, SDL_Rect{0, 0, radarSprite.width, radarSprite.height}, 3)
+            .AddComponent<SpriteComponent>(radarSprite, SDL_Rect{0, 0, radarSprite.width, radarSprite.height}, 3, SDL_Color{255, 255, 255, 255}, true)
             .AddComponent<AnimationComponent>(List<List<SDL_Rect> >{
                                                   List{
                                                       SDL_Rect{0, 0, 64, 64},
@@ -217,6 +231,7 @@ void Game::Update() {
     registry->GetSystem<MovementSystem>().Update(deltaTime);
     registry->GetSystem<AnimationSystem>().Update(deltaTime);
     registry->GetSystem<CollisionSystem>().Update(eventBus);
+    registry->GetSystem<CameraMovementSystem>().Update(camera);
 
     lastFrameTicks = SDL_GetTicks();
 }
@@ -226,8 +241,8 @@ void Game::Render() const {
     SDL_RenderClear(renderer.get());
     // Render all game objects and UI
 
-    registry->GetSystem<RenderSystem>().Render(renderer);
-    if (isDebugMode) registry->GetSystem<RenderColliderSystem>().Render(renderer);
+    registry->GetSystem<RenderSystem>().Render(renderer, camera);
+    if (isDebugMode) registry->GetSystem<RenderColliderSystem>().Render(renderer, camera);
 
     SDL_RenderPresent(renderer.get());
 }

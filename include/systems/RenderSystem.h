@@ -10,7 +10,7 @@ public:
         RequireComponent<SpriteComponent>();
     }
 
-    void Render(const Unique<SDL_Renderer> &renderer) const {
+    void Render(const Unique<SDL_Renderer> &renderer, const SDL_Rect &camera) const {
         struct EntityTuple {
             Entity entity;
             TransformComponent *transform;
@@ -36,8 +36,8 @@ public:
             const auto texture = sprite->sprite.texture.get();
 
             SDL_Rect dstRect = {
-                static_cast<int>(transform->position.x),
-                static_cast<int>(transform->position.y),
+                static_cast<int>(transform->position.x - (sprite->fixed ? 0 : camera.x)),
+                static_cast<int>(transform->position.y - (sprite->fixed ? 0 : camera.y)),
                 static_cast<int>(static_cast<float>(sprite->rect.w) * transform->scale.x),
                 static_cast<int>(static_cast<float>(sprite->rect.h) * transform->scale.y),
             };
