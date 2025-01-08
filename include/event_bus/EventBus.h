@@ -43,8 +43,6 @@ public:
     }
 
     ~EventCallback() override = default;
-
-    bool IsSameInstance(TOwner *otherInstance) { return ownerInstance == otherInstance; }
 };
 
 typedef std::list<std::unique_ptr<IEventCallback> > HandlerList;
