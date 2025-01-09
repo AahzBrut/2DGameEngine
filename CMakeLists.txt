@@ -65,6 +65,12 @@ add_executable(2DGameEngine src/main.cpp
         include/components/KeyboardControlComponent.h
         include/components/CameraFollowComponent.h
         include/systems/CameraMovementSystem.h
+        include/components/HealthComponent.h
+        include/components/ProjectileEmitterComponent.h
+        include/data/CollisionLayer.h
+        include/systems/ProjectileEmissionSystem.h
+        include/components/TempEntityComponent.h
+        include/systems/TempEntitiesRemovalSystem.h
 )
 
 target_link_libraries(2DGameEngine PRIVATE SDL2::SDL2main SDL2::SDL2-static glm SDL2_image::SDL2_image-static)

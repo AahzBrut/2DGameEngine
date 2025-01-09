@@ -25,6 +25,6 @@ public:
     void Clear();
     void ClearUnused();
 
-    void LoadTexture(const Unique<SDL_Renderer>& renderer, const std::string &assetId, const std::string &path);
-    Sprite& GetTexture(const std::string &assetId);
+    void LoadTexture(const Unique<SDL_Renderer> &renderer, const std::string &assetId, const std::string &path);
+    Sprite &GetTexture(const std::string &assetId);
 };

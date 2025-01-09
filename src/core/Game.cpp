@@ -9,6 +9,8 @@
 #include "components/AnimationComponent.h"
 #include "components/BoxColliderComponent.h"
 #include "components/CameraFollowComponent.h"
+#include "components/HealthComponent.h"
+#include "components/ProjectileEmitterComponent.h"
 #include "components/SpriteComponent.h"
 #include "components/TransformComponent.h"
 #include "components/VelocityComponent.h"
@@ -19,8 +21,10 @@
 #include "systems/CollisionSystem.h"
 #include "systems/KeyboardControlSystem.h"
 #include "systems/MovementSystem.h"
+#include "systems/ProjectileEmissionSystem.h"
 #include "systems/RenderColliderSystem.h"
 #include "systems/RenderSystem.h"
+#include "systems/TempEntitiesRemovalSystem.h"
 
 
 int Game::windowWidth = 0;
@@ -83,12 +87,15 @@ void Game::LoadLevel([[maybe_unused]] int level) {
     registry->AddSystem<RenderColliderSystem>();
     registry->AddSystem<KeyboardControlSystem>(eventBus);
     registry->AddSystem<CameraMovementSystem>();
+    registry->AddSystem<ProjectileEmissionSystem>(registry, assetManager);
+    registry->AddSystem<TempEntitiesRemovalSystem>(registry);
 
     assetManager->LoadTexture(renderer, "tank", "./assets/images/tank-panther-right.png");
     assetManager->LoadTexture(renderer, "truck", "./assets/images/truck-ford-right.png");
     assetManager->LoadTexture(renderer, "jungle-map", "./assets/tilemaps/jungle.png");
     assetManager->LoadTexture(renderer, "chopper", "./assets/images/chopper-spritesheet.png");
     assetManager->LoadTexture(renderer, "radar", "./assets/images/radar.png");
+    assetManager->LoadTexture(renderer, "bullet", "./assets/images/bullet.png");
 
     const auto &jungleMapSprite = assetManager->GetTexture("jungle-map");
     mapHeight = 20;
@@ -112,39 +119,44 @@ void Game::LoadLevel([[maybe_unused]] int level) {
                                                    0);
         }
     }
-    mapHeight = mapHeight * tileSize * tileScale;
-    mapWidth = mapWidth * tileSize * tileScale;
+    mapHeight = mapHeight * tileSize * static_cast<int>(tileScale);
+    mapWidth = mapWidth * tileSize * static_cast<int>(tileScale);
 
     mapFile.close();
 
     const auto &tankSprite = assetManager->GetTexture("tank");
     registry->CreateEntity()
-            .AddComponent<TransformComponent>(glm::vec2{0, 0}, glm::vec2{2, 2}, 0.0)
-            .AddComponent<VelocityComponent>(glm::vec2{10, 10})
-            .AddComponent<SpriteComponent>(tankSprite, SDL_Rect{0, 0, tankSprite.width, tankSprite.height},
-                                           2, SDL_Color{255, 0, 0, 255})
-            .AddComponent<BoxColliderComponent>(32, 32);
+            .AddComponent<TransformComponent>(glm::vec2{0}, glm::vec2{2, 2}, 0.0)
+            .AddComponent<VelocityComponent>(glm::vec2{0})
+            .AddComponent<SpriteComponent>(tankSprite, tankSprite.TextureRect(), 2)
+            .AddComponent<HealthComponent>(20, 20)
+            .AddComponent<ProjectileEmitterComponent>(glm::vec2{50, 0}, CollisionLayer::EnemyBullet)
+            .AddComponent<BoxColliderComponent>(26, 16, glm::vec2(3, 8), CollisionLayer::Enemy);
 
     registry->CreateEntity()
             .AddComponent<TransformComponent>(glm::vec2{200, 200}, glm::vec2{2, 2}, 0.0)
-            .AddComponent<VelocityComponent>(glm::vec2{5, -10})
-            .AddComponent<SpriteComponent>(tankSprite, SDL_Rect{0, 0, tankSprite.width, tankSprite.height},
-                                           2, SDL_Color{0, 255, 0, 255})
-            .AddComponent<BoxColliderComponent>(32, 32);
+            .AddComponent<VelocityComponent>(glm::vec2{0})
+            .AddComponent<SpriteComponent>(tankSprite, tankSprite.TextureRect(), 2)
+            .AddComponent<HealthComponent>(20, 20)
+            .AddComponent<ProjectileEmitterComponent>(glm::vec2{50, 0}, CollisionLayer::EnemyBullet)
+            .AddComponent<BoxColliderComponent>(26, 16, glm::vec2(3, 8), CollisionLayer::Enemy);
 
     const auto &truckSprite = assetManager->GetTexture("truck");
     registry->CreateEntity()
-            .AddComponent<TransformComponent>(glm::vec2{0, 0}, glm::vec2{2, 2}, 0.0)
-            .AddComponent<VelocityComponent>(glm::vec2{5, 0})
-            .AddComponent<SpriteComponent>(truckSprite, SDL_Rect{0, 0, truckSprite.width, truckSprite.height}, 1)
-            .AddComponent<BoxColliderComponent>(32, 32);
+            .AddComponent<TransformComponent>(glm::vec2{400, 0}, glm::vec2{2, 2}, 0.0)
+            .AddComponent<VelocityComponent>(glm::vec2{0})
+            .AddComponent<SpriteComponent>(truckSprite, truckSprite.TextureRect(), 1)
+            .AddComponent<HealthComponent>(20, 20)
+            .AddComponent<ProjectileEmitterComponent>(glm::vec2{50, 0}, CollisionLayer::EnemyBullet)
+            .AddComponent<BoxColliderComponent>(32, 32, glm::vec2{0}, CollisionLayer::Enemy);
 
     const auto &chopperSprite = assetManager->GetTexture("chopper");
     registry->CreateEntity()
             .AddComponent<TransformComponent>(glm::vec2{400, 400}, glm::vec2{2, 2}, 0.0)
             .AddComponent<VelocityComponent>(glm::vec2{0, 0})
-            .AddComponent<SpriteComponent>(chopperSprite, SDL_Rect{0, 0, chopperSprite.width, chopperSprite.height}, 3)
-            .AddComponent<BoxColliderComponent>(32, 32)
+            .AddComponent<SpriteComponent>(chopperSprite, chopperSprite.TextureRect(), 3)
+            .AddComponent<BoxColliderComponent>(32, 32, glm::vec2{0}, CollisionLayer::Player)
+            .AddComponent<HealthComponent>(100, 100)
             .AddComponent<KeyboardControlComponent>(glm::vec2{0, -80}, glm::vec2{80, 0}, glm::vec2{0, 80},
                                                     glm::vec2{-80, 0})
             .AddComponent<CameraFollowComponent>()
@@ -170,7 +182,8 @@ void Game::LoadLevel([[maybe_unused]] int level) {
     const auto &radarSprite = assetManager->GetTexture("radar");
     registry->CreateEntity()
             .AddComponent<TransformComponent>(glm::vec2{windowWidth - 72, 8}, glm::vec2{1, 1}, 0.0)
-            .AddComponent<SpriteComponent>(radarSprite, SDL_Rect{0, 0, radarSprite.width, radarSprite.height}, 3, SDL_Color{255, 255, 255, 255}, true)
+            .AddComponent<SpriteComponent>(radarSprite, radarSprite.TextureRect(), 3,
+                                           SDL_Color{255, 255, 255, 255}, true)
             .AddComponent<AnimationComponent>(List<List<SDL_Rect> >{
                                                   List{
                                                       SDL_Rect{0, 0, 64, 64},
@@ -232,6 +245,8 @@ void Game::Update() {
     registry->GetSystem<AnimationSystem>().Update(deltaTime);
     registry->GetSystem<CollisionSystem>().Update(eventBus);
     registry->GetSystem<CameraMovementSystem>().Update(camera);
+    registry->GetSystem<ProjectileEmissionSystem>().Update();
+    registry->GetSystem<TempEntitiesRemovalSystem>().Update();
 
     lastFrameTicks = SDL_GetTicks();
 }

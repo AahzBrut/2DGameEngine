@@ -19,13 +19,13 @@ public:
                firstRect.y + firstRect.h > secondRect.y;
     }
 
-    void Update(const Unique<EventBus>& eventBus) const {
+    void Update(const Unique<EventBus> &eventBus) const {
         auto entities = GetSystemEntities();
 
         for (auto it = entities.begin(); it != entities.end(); ++it) {
             const auto currentEntity = *it;
-            const auto& firstCollider = currentEntity.GetComponent<BoxColliderComponent>();
-            const auto& firstTransform = currentEntity.GetComponent<TransformComponent>();
+            const auto &firstCollider = currentEntity.GetComponent<BoxColliderComponent>();
+            const auto &firstTransform = currentEntity.GetComponent<TransformComponent>();
             const auto firstRect = SDL_Rect{
                 static_cast<int>(firstTransform.position.x + firstCollider.offset.x * firstTransform.scale.x),
                 static_cast<int>(firstTransform.position.y + firstCollider.offset.y * firstTransform.scale.y),
@@ -34,8 +34,8 @@ public:
             };
             for (auto inner = it + 1; inner != entities.end(); ++inner) {
                 const auto otherEntity = *inner;
-                const auto& secondCollider = otherEntity.GetComponent<BoxColliderComponent>();
-                const auto& secondTransform = otherEntity.GetComponent<TransformComponent>();
+                const auto &secondCollider = otherEntity.GetComponent<BoxColliderComponent>();
+                const auto &secondTransform = otherEntity.GetComponent<TransformComponent>();
                 const auto secondRect = SDL_Rect{
                     static_cast<int>(secondTransform.position.x + secondCollider.offset.x * secondTransform.scale.x),
                     static_cast<int>(secondTransform.position.y + secondCollider.offset.y * secondTransform.scale.y),
@@ -43,8 +43,18 @@ public:
                     static_cast<int>(static_cast<float>(secondCollider.height) * secondTransform.scale.y)
                 };
 
-                if (IsIntersects(firstRect, secondRect)) {
-                    eventBus->EmitEvent<CollisionEvent>(currentEntity, otherEntity);
+                if (firstCollider.collisionLayer == CollisionLayer::EnemyBullet &&
+                    secondCollider.collisionLayer == CollisionLayer::Player ||
+                    firstCollider.collisionLayer == CollisionLayer::PlayerBullet &&
+                    secondCollider.collisionLayer == CollisionLayer::Enemy ||
+                    firstCollider.collisionLayer == CollisionLayer::Player &&
+                    secondCollider.collisionLayer == CollisionLayer::EnemyBullet ||
+                    firstCollider.collisionLayer == CollisionLayer::Enemy &&
+                    secondCollider.collisionLayer == CollisionLayer::PlayerBullet) {
+                    if (IsIntersects(firstRect, secondRect)) {
+                        eventBus->EmitEvent<CollisionEvent>(currentEntity, otherEntity);
+                        LOG("Collision detected");
+                    }
                 }
             }
         }
