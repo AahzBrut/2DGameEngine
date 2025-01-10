@@ -11,6 +11,7 @@ public:
         RequireComponent<KeyboardControlComponent>();
         RequireComponent<AnimationComponent>();
         RequireComponent<VelocityComponent>();
+        RequireComponent<ProjectileEmitterComponent>();
         eventBus->SubscribeToEvent<KeyPressedEvent>(this, &KeyboardControlSystem::OnKeyPressed);
     }
 
@@ -20,24 +21,53 @@ public:
         for (auto controlledEntity: GetSystemEntities()) {
             auto &animation = controlledEntity.GetComponent<AnimationComponent>();
             auto &velocity = controlledEntity.GetComponent<VelocityComponent>();
+            auto &direction = controlledEntity.GetComponent<DirectionComponent>();
+            auto &emitter = controlledEntity.GetComponent<ProjectileEmitterComponent>();
             const auto &keyboardControl = controlledEntity.GetComponent<KeyboardControlComponent>();
             switch (event.key) {
                 case SDLK_w:
                     animation.currentSequence = 0;
-                    velocity.velocity = keyboardControl.UpVector;
+                    if (event.eventType == SDL_KEYDOWN) {
+                        direction.direction = glm::vec2{0, -1};
+                        velocity.velocity = keyboardControl.UpVector;
+                    } else {
+                        velocity.velocity = glm::vec2{0};
+                    }
                     break;
                 case SDLK_d:
                     animation.currentSequence = 1;
-                    velocity.velocity = keyboardControl.RightVector;
+                    if (event.eventType == SDL_KEYDOWN) {
+                        direction.direction = glm::vec2{1, 0};
+                        velocity.velocity = keyboardControl.RightVector;
+                    } else {
+                        velocity.velocity = glm::vec2{0};
+                    }
                     break;
                 case SDLK_s:
                     animation.currentSequence = 2;
-                    velocity.velocity = keyboardControl.DownVector;
+                    if (event.eventType == SDL_KEYDOWN) {
+                        direction.direction = glm::vec2{0, 1};
+                        velocity.velocity = keyboardControl.DownVector;
+                    } else {
+                        velocity.velocity = glm::vec2{0};
+                    }
                     break;
                 case SDLK_a:
                     animation.currentSequence = 3;
-                    velocity.velocity = keyboardControl.LeftVector;
+                    if (event.eventType == SDL_KEYDOWN) {
+                        direction.direction = glm::vec2{-1, 0};
+                        velocity.velocity = keyboardControl.LeftVector;
+                    } else {
+                        velocity.velocity = glm::vec2{0};
+                    }
                     break;
+                case SDLK_SPACE:
+                    if (event.eventType == SDL_KEYDOWN) {
+                        emitter.autoShoot = true;
+                    } else {
+                        emitter.autoShoot = false;
+                    }
+                break;
                 default:
                     break;
             }

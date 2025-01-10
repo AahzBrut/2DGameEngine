@@ -9,6 +9,7 @@
 #include "components/AnimationComponent.h"
 #include "components/BoxColliderComponent.h"
 #include "components/CameraFollowComponent.h"
+#include "components/DirectionComponent.h"
 #include "components/HealthComponent.h"
 #include "components/ProjectileEmitterComponent.h"
 #include "components/SpriteComponent.h"
@@ -130,7 +131,8 @@ void Game::LoadLevel([[maybe_unused]] int level) {
             .AddComponent<VelocityComponent>(glm::vec2{0})
             .AddComponent<SpriteComponent>(tankSprite, tankSprite.TextureRect(), 2)
             .AddComponent<HealthComponent>(20, 20)
-            .AddComponent<ProjectileEmitterComponent>(glm::vec2{50, 0}, CollisionLayer::EnemyBullet)
+            .AddComponent<DirectionComponent>()
+            .AddComponent<ProjectileEmitterComponent>(glm::vec2{50, 50}, CollisionLayer::EnemyBullet)
             .AddComponent<BoxColliderComponent>(26, 16, glm::vec2(3, 8), CollisionLayer::Enemy);
 
     registry->CreateEntity()
@@ -138,7 +140,8 @@ void Game::LoadLevel([[maybe_unused]] int level) {
             .AddComponent<VelocityComponent>(glm::vec2{0})
             .AddComponent<SpriteComponent>(tankSprite, tankSprite.TextureRect(), 2)
             .AddComponent<HealthComponent>(20, 20)
-            .AddComponent<ProjectileEmitterComponent>(glm::vec2{50, 0}, CollisionLayer::EnemyBullet)
+            .AddComponent<DirectionComponent>()
+            .AddComponent<ProjectileEmitterComponent>(glm::vec2{50, 50}, CollisionLayer::EnemyBullet)
             .AddComponent<BoxColliderComponent>(26, 16, glm::vec2(3, 8), CollisionLayer::Enemy);
 
     const auto &truckSprite = assetManager->GetTexture("truck");
@@ -147,7 +150,8 @@ void Game::LoadLevel([[maybe_unused]] int level) {
             .AddComponent<VelocityComponent>(glm::vec2{0})
             .AddComponent<SpriteComponent>(truckSprite, truckSprite.TextureRect(), 1)
             .AddComponent<HealthComponent>(20, 20)
-            .AddComponent<ProjectileEmitterComponent>(glm::vec2{50, 0}, CollisionLayer::EnemyBullet)
+            .AddComponent<DirectionComponent>()
+            .AddComponent<ProjectileEmitterComponent>(glm::vec2{50, 50}, CollisionLayer::EnemyBullet)
             .AddComponent<BoxColliderComponent>(32, 32, glm::vec2{0}, CollisionLayer::Enemy);
 
     const auto &chopperSprite = assetManager->GetTexture("chopper");
@@ -157,6 +161,9 @@ void Game::LoadLevel([[maybe_unused]] int level) {
             .AddComponent<SpriteComponent>(chopperSprite, chopperSprite.TextureRect(), 3)
             .AddComponent<BoxColliderComponent>(32, 32, glm::vec2{0}, CollisionLayer::Player)
             .AddComponent<HealthComponent>(100, 100)
+            .AddComponent<DirectionComponent>(glm::vec2{0, -1})
+            .AddComponent<ProjectileEmitterComponent>(glm::vec2{100, 100}, CollisionLayer::PlayerBullet, 500, 10000, 10,
+                                                      false)
             .AddComponent<KeyboardControlComponent>(glm::vec2{0, -80}, glm::vec2{80, 0}, glm::vec2{0, 80},
                                                     glm::vec2{-80, 0})
             .AddComponent<CameraFollowComponent>()
@@ -227,7 +234,11 @@ void Game::ProcessInput() {
                 if (event.key.keysym.sym == SDLK_BACKQUOTE) {
                     isDebugMode = !isDebugMode;
                 }
-                eventBus->EmitEvent<KeyPressedEvent>(event.key.keysym.sym);
+                eventBus->EmitEvent<KeyPressedEvent>(SDL_KEYDOWN, event.key.keysym.sym);
+                break;
+            case SDL_KEYUP:
+                eventBus->EmitEvent<KeyPressedEvent>(SDL_KEYUP, event.key.keysym.sym);
+                break;
             default:
                 break;
         }

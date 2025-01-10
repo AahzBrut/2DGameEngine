@@ -8,6 +8,7 @@ struct ProjectileEmitterComponent {
     int cooldown;
     int lifetime;
     int bulletDamage;
+    bool autoShoot;
     int lastShotTime{static_cast<int>(SDL_GetTicks())};
 
     explicit ProjectileEmitterComponent(
@@ -15,10 +16,12 @@ struct ProjectileEmitterComponent {
         const CollisionLayer collisionLayer = CollisionLayer::None,
         const int cooldown = 2000,
         const int lifetime = 10000,
-        const int bulletDamage = 10)
+        const int bulletDamage = 10,
+        const bool autoShoot = true)
         : velocity{velocity},
           collisionLayer{collisionLayer},
           cooldown{cooldown},
           lifetime{lifetime},
-          bulletDamage{bulletDamage} {}
+          bulletDamage{bulletDamage},
+          autoShoot{autoShoot} {}
 };
