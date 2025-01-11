@@ -7,6 +7,7 @@ set(BUILD_SHARED_LIBS OFF)
 set(SDL_SHARED OFF)
 set(SDL2IMAGE_INSTALL OFF)
 set(SDL_STATIC ON)
+set(SDL2MIXER_VENDORED ON)
 
 include(FetchContent)
 
@@ -34,7 +35,15 @@ FetchContent_Declare(
         GIT_PROGRESS TRUE
 )
 
-FetchContent_MakeAvailable(SDL2 glm SDL2_image)
+FetchContent_Declare(
+        SDL2_mixer
+        GIT_REPOSITORY https://github.com/libsdl-org/SDL_mixer.git
+        GIT_TAG release-2.8.0
+        GIT_SHALLOW TRUE
+        GIT_PROGRESS TRUE
+)
+
+FetchContent_MakeAvailable(SDL2 glm SDL2_image SDL2_mixer)
 
 add_executable(2DGameEngine src/main.cpp
         include/core/Game.h
@@ -76,7 +85,7 @@ add_executable(2DGameEngine src/main.cpp
         include/components/DamageComponent.h
 )
 
-target_link_libraries(2DGameEngine PRIVATE SDL2::SDL2main SDL2::SDL2-static glm SDL2_image::SDL2_image-static)
+target_link_libraries(2DGameEngine PRIVATE SDL2::SDL2main SDL2::SDL2-static glm SDL2_image::SDL2_image-static SDL2_mixer::SDL2_mixer-static)
 target_include_directories(2DGameEngine PUBLIC include)
 
 
