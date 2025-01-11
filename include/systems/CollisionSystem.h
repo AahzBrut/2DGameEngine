@@ -43,14 +43,7 @@ public:
                     static_cast<int>(static_cast<float>(secondCollider.height) * secondTransform.scale.y)
                 };
 
-                if (firstCollider.collisionLayer == CollisionLayer::EnemyBullet &&
-                    secondCollider.collisionLayer == CollisionLayer::Player ||
-                    firstCollider.collisionLayer == CollisionLayer::PlayerBullet &&
-                    secondCollider.collisionLayer == CollisionLayer::Enemy ||
-                    firstCollider.collisionLayer == CollisionLayer::Player &&
-                    secondCollider.collisionLayer == CollisionLayer::EnemyBullet ||
-                    firstCollider.collisionLayer == CollisionLayer::Enemy &&
-                    secondCollider.collisionLayer == CollisionLayer::PlayerBullet) {
+                if (LayersCollisionSettings::IsLayersCollides(firstCollider.collisionLayer, secondCollider.collisionLayer)) {
                     if (IsIntersects(firstRect, secondRect)) {
                         eventBus->EmitEvent<CollisionEvent>(currentEntity, otherEntity);
                         LOG("Collision detected");
