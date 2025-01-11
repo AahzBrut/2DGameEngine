@@ -20,6 +20,7 @@
 #include "systems/AnimationSystem.h"
 #include "systems/CameraMovementSystem.h"
 #include "systems/CollisionSystem.h"
+#include "systems/DamageSystem.h"
 #include "systems/KeyboardControlSystem.h"
 #include "systems/MovementSystem.h"
 #include "systems/ProjectileEmissionSystem.h"
@@ -90,6 +91,7 @@ void Game::LoadLevel([[maybe_unused]] int level) {
     registry->AddSystem<CameraMovementSystem>();
     registry->AddSystem<ProjectileEmissionSystem>(registry, assetManager);
     registry->AddSystem<TempEntitiesRemovalSystem>(registry);
+    registry->AddSystem<DamageSystem>(eventBus);
 
     assetManager->LoadTexture(renderer, "tank", "./assets/images/tank-panther-right.png");
     assetManager->LoadTexture(renderer, "truck", "./assets/images/truck-ford-right.png");

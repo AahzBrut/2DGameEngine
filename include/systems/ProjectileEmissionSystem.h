@@ -1,6 +1,7 @@
 #pragma once
 #include <glm/glm.hpp>
 #include "asset_manager/AssetManager.h"
+#include "components/DamageComponent.h"
 #include "components/TempEntityComponent.h"
 #include "ecs/ECS.h"
 
@@ -35,17 +36,18 @@ public:
                 const auto &emitterSprite = entity.GetComponent<SpriteComponent>();
 
                 registry->CreateEntity()
+                        .AddComponent<DamageComponent>(projectile.bulletDamage)
                         .AddComponent<TransformComponent>(transform.position + glm::vec2{
                                                               static_cast<float>(emitterSprite.rect.w) *
                                                               transform.scale.x / 2,
                                                               static_cast<float>(emitterSprite.rect.h) *
                                                               transform.scale.y / 2
-                        } - glm::vec2{
-                            static_cast<float>(bulletSprite.width) *
-                            transform.scale.x / 2,
-                            static_cast<float>(bulletSprite.height) *
-                            transform.scale.y / 2
-                        }, transform.scale, 0)
+                                                          } - glm::vec2{
+                                                              static_cast<float>(bulletSprite.width) *
+                                                              transform.scale.x / 2,
+                                                              static_cast<float>(bulletSprite.height) *
+                                                              transform.scale.y / 2
+                                                          }, transform.scale, 0)
                         .AddComponent<VelocityComponent>(velocity)
                         .AddComponent<BoxColliderComponent>(4, 4, glm::vec2{0}, projectile.collisionLayer)
                         .AddComponent<SpriteComponent>(bulletSprite, bulletSprite.TextureRect(), 4)

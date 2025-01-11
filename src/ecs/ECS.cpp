@@ -14,16 +14,18 @@ void Entity::Destroy() const {
     registry->DestroyEntity(*this);
 }
 
-void Entity::Tag(const std::string &tag) const {
+Entity& Entity::Tag(const std::string &tag) {
     registry->TagEntity(*this, tag);
+    return *this;
 }
 
 bool Entity::HasTag(const std::string &tag) const {
     return registry->EntityHasTag(*this, tag);
 }
 
-void Entity::Group(const std::string &group) const {
+Entity& Entity::Group(const std::string &group) {
     registry->GroupEntity(*this, group);
+    return *this;
 }
 
 bool Entity::BelongsToGroup(const std::string &group) const {

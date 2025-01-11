@@ -48,9 +48,9 @@ public:
     void Destroy() const;
     [[nodiscard]] int GetId() const;
 
-    void Tag(const std::string &tag) const;
+    [[nodiscard]] Entity& Tag(const std::string &tag);
     [[nodiscard]] bool HasTag(const std::string &tag) const;
-    void Group(const std::string &group) const;
+    [[nodiscard]] Entity& Group(const std::string &group);
     [[nodiscard]] bool BelongsToGroup(const std::string &group) const;
 
     template<typename TComponent, typename... TArgs>
