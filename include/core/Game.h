@@ -4,6 +4,7 @@
 #include <SDL.h>
 #include "SmartPointers.h"
 #include "asset_manager/AssetManager.h"
+#include "audio_manager/AudioManager.h"
 #include "ecs/ECS.h"
 #include "event_bus/EventBus.h"
 
@@ -21,6 +22,7 @@ class Game {
     Unique<Registry> registry{new Registry()};
     Unique<AssetManager> assetManager{new AssetManager()};
     Unique<EventBus> eventBus{new EventBus()};
+    Unique<AudioManager> audioManager{new AudioManager(assetManager)};
 
 public:
     static int windowWidth;

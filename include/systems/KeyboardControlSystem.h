@@ -7,7 +7,8 @@
 
 class KeyboardControlSystem : public System {
 public:
-    explicit KeyboardControlSystem(const Unique<EventBus> &eventBus) {
+    explicit KeyboardControlSystem(
+        const Unique<EventBus> &eventBus) {
         RequireComponent<KeyboardControlComponent>();
         RequireComponent<AnimationComponent>();
         RequireComponent<VelocityComponent>();
@@ -67,7 +68,7 @@ public:
                     } else {
                         emitter.autoShoot = false;
                     }
-                break;
+                    break;
                 default:
                     break;
             }

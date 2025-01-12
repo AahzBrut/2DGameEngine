@@ -9,12 +9,16 @@
 class ProjectileEmissionSystem : public System {
     Registry *registry;
     AssetManager *assetManager;
+    AudioManager *audioManager;
 
 public:
     explicit ProjectileEmissionSystem(
         const Unique<Registry> &registry,
-        const Unique<AssetManager> &assetManager)
-        : registry{registry.get()}, assetManager{assetManager.get()} {
+        const Unique<AssetManager> &assetManager,
+        const Unique<AudioManager> &audioManager)
+        : registry{registry.get()},
+          assetManager{assetManager.get()},
+          audioManager{audioManager.get()} {
         RequireComponent<ProjectileEmitterComponent>();
         RequireComponent<VelocityComponent>();
         RequireComponent<TransformComponent>();
@@ -32,6 +36,7 @@ public:
                 projectile.autoShoot &&
                 SDL_GetTicks() - projectile.lastShotTime >= projectile.cooldown) {
                 projectile.lastShotTime = static_cast<int>(SDL_GetTicks());
+                audioManager->PlaySound("helicopter-sound");
                 const auto velocity = direction.direction * projectile.velocity;
                 const auto &emitterSprite = entity.GetComponent<SpriteComponent>();
 

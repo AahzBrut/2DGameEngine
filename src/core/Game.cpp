@@ -4,7 +4,6 @@
 #include <fstream>
 #include <iostream>
 #include <ostream>
-#include <SDL_mixer.h>
 #include <SDL2/SDL.h>
 
 #include "components/AnimationComponent.h"
@@ -76,7 +75,7 @@ void Game::Initialize() {
     //SDL_SetWindowFullscreen(window.get(), SDL_WINDOW_FULLSCREEN);
     SDL_GL_SetSwapInterval(0);
 
-    Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 2, 2048);
+    audioManager->Initialize();
 
     camera = {0, 0, windowWidth, windowHeight};
 
@@ -92,7 +91,7 @@ void Game::LoadLevel([[maybe_unused]] int level) {
     registry->AddSystem<RenderColliderSystem>();
     registry->AddSystem<KeyboardControlSystem>(eventBus);
     registry->AddSystem<CameraMovementSystem>();
-    registry->AddSystem<ProjectileEmissionSystem>(registry, assetManager);
+    registry->AddSystem<ProjectileEmissionSystem>(registry, assetManager, audioManager);
     registry->AddSystem<TempEntitiesRemovalSystem>(registry);
     registry->AddSystem<DamageSystem>(eventBus);
 
@@ -103,11 +102,12 @@ void Game::LoadLevel([[maybe_unused]] int level) {
     assetManager->LoadTexture(renderer, "radar", "./assets/images/radar.png");
     assetManager->LoadTexture(renderer, "bullet", "./assets/images/bullet.png");
 
-    assetManager->LoadSoundEffect("helicopter-sound", "./assets/sounds/helicopter.wav");
+    assetManager->LoadSoundEffect("helicopter-sound", "./assets/sounds/explosion4.wav");
     assetManager->LoadMusic("main-music-theme", "./assets/music/Abnormal Circumstances.mp3");
 
     //Mix_PlayChannel(-1, assetManager->GetSoundEffect("helicopter-sound").get(), 0);
-    Mix_PlayMusic(assetManager->GetMusic("main-music-theme").get(), -1);
+    //audioManager->PlayMusic("main-music-theme", -1);
+    //audioManager->PlaySound("helicopter-sound", .9f);
 
     const auto &jungleMapSprite = assetManager->GetTexture("jungle-map");
     mapHeight = 20;
@@ -287,6 +287,6 @@ void Game::Render() const {
 void Game::Destroy() {
     SDL_DestroyRenderer(renderer.release());
     SDL_DestroyWindow(window.release());
-    Mix_CloseAudio();
+    audioManager->Shutdown();
     SDL_Quit();
 }
