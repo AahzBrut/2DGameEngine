@@ -87,6 +87,7 @@ add_executable(2DGameEngine src/main.cpp
         src/audio_manager/AudioManager.cpp
         include/components/SoundSourceComponent.h
         include/systems/SoundPlaySystem.h
+        include/utils/Math.h
 )
 
 target_link_libraries(2DGameEngine PRIVATE SDL2::SDL2main SDL2::SDL2-static glm SDL2_image::SDL2_image-static SDL2_mixer::SDL2_mixer-static)
