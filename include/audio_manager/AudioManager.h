@@ -29,6 +29,7 @@ public:
     void Initialize();
     void Shutdown();
 
-    void PlayMusic(const std::string &assetId, int loopCount);
-    int PlaySound(const std::string &assetId);
+    void PlayMusic(const std::string &assetId, int loopCount) const;
+    void PlaySound(const std::string &assetId) const;
+    void PlaySound(const std::string &assetId, float distance) const;
 };

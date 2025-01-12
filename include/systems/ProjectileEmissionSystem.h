@@ -2,6 +2,7 @@
 #include <glm/glm.hpp>
 #include "asset_manager/AssetManager.h"
 #include "components/DamageComponent.h"
+#include "components/SoundSourceComponent.h"
 #include "components/TempEntityComponent.h"
 #include "ecs/ECS.h"
 
@@ -9,16 +10,13 @@
 class ProjectileEmissionSystem : public System {
     Registry *registry;
     AssetManager *assetManager;
-    AudioManager *audioManager;
 
 public:
     explicit ProjectileEmissionSystem(
         const Unique<Registry> &registry,
-        const Unique<AssetManager> &assetManager,
-        const Unique<AudioManager> &audioManager)
+        const Unique<AssetManager> &assetManager)
         : registry{registry.get()},
-          assetManager{assetManager.get()},
-          audioManager{audioManager.get()} {
+          assetManager{assetManager.get()} {
         RequireComponent<ProjectileEmitterComponent>();
         RequireComponent<VelocityComponent>();
         RequireComponent<TransformComponent>();
@@ -36,23 +34,27 @@ public:
                 projectile.autoShoot &&
                 SDL_GetTicks() - projectile.lastShotTime >= projectile.cooldown) {
                 projectile.lastShotTime = static_cast<int>(SDL_GetTicks());
-                audioManager->PlaySound("helicopter-sound");
                 const auto velocity = direction.direction * projectile.velocity;
                 const auto &emitterSprite = entity.GetComponent<SpriteComponent>();
 
+                const auto spawnPosition = transform.position + glm::vec2{
+                                               static_cast<float>(emitterSprite.rect.w) *
+                                               transform.scale.x / 2,
+                                               static_cast<float>(emitterSprite.rect.h) *
+                                               transform.scale.y / 2
+                                           } - glm::vec2{
+                                               static_cast<float>(bulletSprite.width) *
+                                               transform.scale.x / 2,
+                                               static_cast<float>(bulletSprite.height) *
+                                               transform.scale.y / 2
+                                           };
+
+                registry->CreateEntity()
+                        .AddComponent<SoundSourceComponent>(spawnPosition, "helicopter-sound");
+
                 registry->CreateEntity()
                         .AddComponent<DamageComponent>(projectile.bulletDamage)
-                        .AddComponent<TransformComponent>(transform.position + glm::vec2{
-                                                              static_cast<float>(emitterSprite.rect.w) *
-                                                              transform.scale.x / 2,
-                                                              static_cast<float>(emitterSprite.rect.h) *
-                                                              transform.scale.y / 2
-                                                          } - glm::vec2{
-                                                              static_cast<float>(bulletSprite.width) *
-                                                              transform.scale.x / 2,
-                                                              static_cast<float>(bulletSprite.height) *
-                                                              transform.scale.y / 2
-                                                          }, transform.scale, 0)
+                        .AddComponent<TransformComponent>(spawnPosition, transform.scale, 0)
                         .AddComponent<VelocityComponent>(velocity)
                         .AddComponent<BoxColliderComponent>(4, 4, glm::vec2{0}, projectile.collisionLayer)
                         .AddComponent<SpriteComponent>(bulletSprite, bulletSprite.TextureRect(), 4)

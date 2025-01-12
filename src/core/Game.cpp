@@ -26,6 +26,7 @@
 #include "systems/ProjectileEmissionSystem.h"
 #include "systems/RenderColliderSystem.h"
 #include "systems/RenderSystem.h"
+#include "systems/SoundPlaySystem.h"
 #include "systems/TempEntitiesRemovalSystem.h"
 
 
@@ -91,9 +92,10 @@ void Game::LoadLevel([[maybe_unused]] int level) {
     registry->AddSystem<RenderColliderSystem>();
     registry->AddSystem<KeyboardControlSystem>(eventBus);
     registry->AddSystem<CameraMovementSystem>();
-    registry->AddSystem<ProjectileEmissionSystem>(registry, assetManager, audioManager);
+    registry->AddSystem<ProjectileEmissionSystem>(registry, assetManager);
     registry->AddSystem<TempEntitiesRemovalSystem>(registry);
     registry->AddSystem<DamageSystem>(eventBus);
+    registry->AddSystem<SoundPlaySystem>(audioManager);
 
     assetManager->LoadTexture(renderer, "tank", "./assets/images/tank-panther-right.png");
     assetManager->LoadTexture(renderer, "truck", "./assets/images/truck-ford-right.png");
@@ -269,6 +271,7 @@ void Game::Update() {
     registry->GetSystem<CameraMovementSystem>().Update(camera);
     registry->GetSystem<ProjectileEmissionSystem>().Update();
     registry->GetSystem<TempEntitiesRemovalSystem>().Update();
+    registry->GetSystem<SoundPlaySystem>().Update(camera);
 
     lastFrameTicks = SDL_GetTicks();
 }

@@ -11,10 +11,15 @@ void AudioManager::Shutdown() {
     Mix_Quit();
 }
 
-void AudioManager::PlayMusic(const std::string &assetId, const int loopCount) {
+void AudioManager::PlayMusic(const std::string &assetId, const int loopCount) const {
     Mix_PlayMusic(assetManager->GetMusic(assetId).get(), loopCount);
 }
 
-int AudioManager::PlaySound(const std::string &assetId) {
-    return Mix_PlayChannel(-1, assetManager->GetSoundEffect(assetId).get(), 0);
+void AudioManager::PlaySound(const std::string &assetId) const {
+    Mix_PlayChannel(-1, assetManager->GetSoundEffect(assetId).get(), 0);
+}
+
+void AudioManager::PlaySound(const std::string &assetId, const float distance) const {
+    const auto channel = Mix_PlayChannel(-1, assetManager->GetSoundEffect(assetId).get(), 0);
+    Mix_SetDistance(channel, static_cast<Uint8>(distance * .5f));
 }
