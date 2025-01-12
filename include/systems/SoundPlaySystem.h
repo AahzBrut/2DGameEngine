@@ -4,24 +4,39 @@
 
 class SoundPlaySystem : public System {
     AudioManager *audioManager;
+    EventBus *eventBus;
+    List<SoundEmitterEvent> events;
 
 public:
-    explicit SoundPlaySystem(const Unique<AudioManager> &audioManager)
-        : audioManager{audioManager.get()} {
-        RequireComponent<SoundSourceComponent>();
+    explicit SoundPlaySystem(
+        const Unique<AudioManager> &audioManager,
+        const Unique<EventBus> &eventBus)
+        : audioManager{audioManager.get()},
+          eventBus{eventBus.get()} {
+        RequireComponent<TransformComponent>();
+        RequireComponent<CameraFollowComponent>();
+
+        eventBus->SubscribeToEvent(this, OnSoundEmitted);
     }
 
-    void Update(const SDL_Rect &camera) const {
-        for (auto entity: GetSystemEntities()) {
-            const auto &soundComp = entity.GetComponent<SoundSourceComponent>();
-            const auto soundPosition = soundComp.position -
-                                       (glm::vec2{camera.x, camera.y} + glm::vec2{camera.w / 2, camera.h / 2});
+    void Update() {
+        const auto listeners = GetSystemEntities();
+        if (listeners.empty()) return;
+
+        const auto &listenerTransform = listeners.front().GetComponent<TransformComponent>();
+
+        for (auto event: events) {
+            const auto soundPosition = listenerTransform.position - event.position;
             const auto soundDistance = sqrt(soundPosition.x * soundPosition.x + soundPosition.y * soundPosition.y);
             LOG("Distance to sound: {}", soundDistance);
             if (soundDistance <= 500) {
-                audioManager->PlaySound(soundComp.soundAssetId, soundDistance);
+                audioManager->PlaySound(event.soundAssetId, soundDistance);
             }
-            entity.Destroy();
         }
+        events.clear();
+    }
+
+    void OnSoundEmitted(SoundEmitterEvent &event) {
+        events.emplace_back(event);
     }
 };

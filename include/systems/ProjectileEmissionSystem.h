@@ -2,21 +2,24 @@
 #include <glm/glm.hpp>
 #include "asset_manager/AssetManager.h"
 #include "components/DamageComponent.h"
-#include "components/SoundSourceComponent.h"
 #include "components/TempEntityComponent.h"
 #include "ecs/ECS.h"
+#include "events/SoundEmitterEvent.h"
 
 
 class ProjectileEmissionSystem : public System {
     Registry *registry;
     AssetManager *assetManager;
+    EventBus *eventBus;
 
 public:
     explicit ProjectileEmissionSystem(
         const Unique<Registry> &registry,
-        const Unique<AssetManager> &assetManager)
+        const Unique<AssetManager> &assetManager,
+        const Unique<EventBus> &eventBus)
         : registry{registry.get()},
-          assetManager{assetManager.get()} {
+          assetManager{assetManager.get()},
+          eventBus{eventBus.get()} {
         RequireComponent<ProjectileEmitterComponent>();
         RequireComponent<VelocityComponent>();
         RequireComponent<TransformComponent>();
@@ -49,8 +52,7 @@ public:
                                                transform.scale.y / 2
                                            };
 
-                registry->CreateEntity()
-                        .AddComponent<SoundSourceComponent>(spawnPosition, "helicopter-sound");
+                eventBus->EmitEvent<SoundEmitterEvent>(spawnPosition, "helicopter-sound");
 
                 registry->CreateEntity()
                         .AddComponent<DamageComponent>(projectile.bulletDamage)

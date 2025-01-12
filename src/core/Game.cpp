@@ -92,10 +92,10 @@ void Game::LoadLevel([[maybe_unused]] int level) {
     registry->AddSystem<RenderColliderSystem>();
     registry->AddSystem<KeyboardControlSystem>(eventBus);
     registry->AddSystem<CameraMovementSystem>();
-    registry->AddSystem<ProjectileEmissionSystem>(registry, assetManager);
+    registry->AddSystem<ProjectileEmissionSystem>(registry, assetManager, eventBus);
     registry->AddSystem<TempEntitiesRemovalSystem>(registry);
     registry->AddSystem<DamageSystem>(eventBus);
-    registry->AddSystem<SoundPlaySystem>(audioManager);
+    registry->AddSystem<SoundPlaySystem>(audioManager, eventBus);
 
     assetManager->LoadTexture(renderer, "tank", "./assets/images/tank-panther-right.png");
     assetManager->LoadTexture(renderer, "truck", "./assets/images/truck-ford-right.png");
@@ -271,7 +271,7 @@ void Game::Update() {
     registry->GetSystem<CameraMovementSystem>().Update(camera);
     registry->GetSystem<ProjectileEmissionSystem>().Update();
     registry->GetSystem<TempEntitiesRemovalSystem>().Update();
-    registry->GetSystem<SoundPlaySystem>().Update(camera);
+    registry->GetSystem<SoundPlaySystem>().Update();
 
     lastFrameTicks = SDL_GetTicks();
 }
