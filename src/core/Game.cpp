@@ -11,6 +11,7 @@
 #include "components/CameraFollowComponent.h"
 #include "components/DirectionComponent.h"
 #include "components/HealthComponent.h"
+#include "components/LabelComponent.h"
 #include "components/ProjectileEmitterComponent.h"
 #include "components/SpriteComponent.h"
 #include "components/TransformComponent.h"
@@ -25,6 +26,7 @@
 #include "systems/MovementSystem.h"
 #include "systems/ProjectileEmissionSystem.h"
 #include "systems/RenderColliderSystem.h"
+#include "systems/RenderLabelSystem.h"
 #include "systems/RenderSystem.h"
 #include "systems/SoundPlaySystem.h"
 #include "systems/TempEntitiesRemovalSystem.h"
@@ -46,6 +48,11 @@ Game::~Game() {
 void Game::Initialize() {
     if (SDL_Init(SDL_INIT_EVERYTHING) != 0) {
         std::cerr << "SDL_Init error: " << SDL_GetError() << std::endl;
+        return;
+    }
+
+    if (TTF_Init() != 0) {
+        std::cerr << "TTF_Init error: " << SDL_GetError() << std::endl;
         return;
     }
 
@@ -96,6 +103,7 @@ void Game::LoadLevel([[maybe_unused]] int level) {
     registry->AddSystem<TempEntitiesRemovalSystem>(registry);
     registry->AddSystem<DamageSystem>(eventBus);
     registry->AddSystem<SoundPlaySystem>(audioManager, eventBus);
+    registry->AddSystem<RenderLabelSystem>();
 
     assetManager->LoadTexture(renderer, "tank", "./assets/images/tank-panther-right.png");
     assetManager->LoadTexture(renderer, "truck", "./assets/images/truck-ford-right.png");
@@ -106,10 +114,7 @@ void Game::LoadLevel([[maybe_unused]] int level) {
 
     assetManager->LoadSoundEffect("helicopter-sound", "./assets/sounds/explosion4.wav");
     assetManager->LoadMusic("main-music-theme", "./assets/music/Abnormal Circumstances.mp3");
-
-    //Mix_PlayChannel(-1, assetManager->GetSoundEffect("helicopter-sound").get(), 0);
-    //audioManager->PlayMusic("main-music-theme", -1);
-    //audioManager->PlaySound("helicopter-sound", .9f);
+    assetManager->LoadFont("charriot-font", "./assets/fonts/charriot.ttf", 32);
 
     const auto &jungleMapSprite = assetManager->GetTexture("jungle-map");
     mapHeight = 20;
@@ -216,6 +221,12 @@ void Game::LoadLevel([[maybe_unused]] int level) {
                                                       SDL_Rect{448, 0, 64, 64},
                                                   }
                                               }, 0, 0, 8.f, true, 0);
+    registry->CreateEntity()
+            .AddComponent<LabelComponent>(
+                glm::vec2{200, 0},
+                "Test label",
+                assetManager.get()->GetFont("charriot-font"),
+                SDL_Color{255, 255, 255, 255});
 }
 
 void Game::Setup() {
@@ -283,6 +294,7 @@ void Game::Render() const {
 
     registry->GetSystem<RenderSystem>().Render(renderer, camera);
     if (isDebugMode) registry->GetSystem<RenderColliderSystem>().Render(renderer, camera);
+    registry->GetSystem<RenderLabelSystem>().Render(renderer);
 
     SDL_RenderPresent(renderer.get());
 }

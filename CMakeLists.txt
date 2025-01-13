@@ -8,6 +8,7 @@ set(SDL_SHARED OFF)
 set(SDL2IMAGE_INSTALL OFF)
 set(SDL_STATIC ON)
 set(SDL2MIXER_VENDORED ON)
+set(SDL2TTF_VENDORED ON)
 
 include(FetchContent)
 
@@ -43,7 +44,15 @@ FetchContent_Declare(
         GIT_PROGRESS TRUE
 )
 
-FetchContent_MakeAvailable(SDL2 glm SDL2_image SDL2_mixer)
+FetchContent_Declare(
+        SDL_ttf
+        GIT_REPOSITORY https://github.com/libsdl-org/SDL_ttf.git
+        GIT_TAG release-2.24.0
+        GIT_SHALLOW TRUE
+        GIT_PROGRESS TRUE
+)
+
+FetchContent_MakeAvailable(SDL2 glm SDL2_image SDL2_mixer SDL_ttf)
 
 add_executable(2DGameEngine src/main.cpp
         include/core/Game.h
@@ -88,9 +97,11 @@ add_executable(2DGameEngine src/main.cpp
         include/systems/SoundPlaySystem.h
         include/utils/Math.h
         include/events/SoundEmitterEvent.h
+        include/components/LabelComponent.h
+        include/systems/RenderLabelSystem.h
 )
 
-target_link_libraries(2DGameEngine PRIVATE SDL2::SDL2main SDL2::SDL2-static glm SDL2_image::SDL2_image-static SDL2_mixer::SDL2_mixer-static)
+target_link_libraries(2DGameEngine PRIVATE SDL2::SDL2main SDL2::SDL2-static glm SDL2_image::SDL2_image-static SDL2_mixer::SDL2_mixer-static SDL2_ttf::SDL2_ttf-static)
 target_include_directories(2DGameEngine PUBLIC include)
 
 

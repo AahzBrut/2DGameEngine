@@ -25,7 +25,7 @@ public:
 
         const auto &listenerTransform = listeners.front().GetComponent<TransformComponent>();
 
-        for (auto event: events) {
+        for (const auto& event: events) {
             const auto soundPosition = listenerTransform.position - event.position;
             const auto soundDistance = sqrt(soundPosition.x * soundPosition.x + soundPosition.y * soundPosition.y);
             LOG("Distance to sound: {}", soundDistance);

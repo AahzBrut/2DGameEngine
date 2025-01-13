@@ -26,7 +26,7 @@ public:
           audioChannels{audioChannels},
           bufferSize{bufferSize} {}
 
-    void Initialize();
+    void Initialize() const;
     void Shutdown();
 
     void PlayMusic(const std::string &assetId, int loopCount) const;

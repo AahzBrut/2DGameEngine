@@ -1,12 +1,13 @@
 #include "audio_manager/AudioManager.h"
 
 
-void AudioManager::Initialize() {
+void AudioManager::Initialize() const {
     Mix_OpenAudio(frequency, format, audioChannels, bufferSize);
     Mix_AllocateChannels(MaxChannelsCount);
 }
 
-void AudioManager::Shutdown() {
+// ReSharper disable once CppMemberFunctionMayBeStatic
+void AudioManager::Shutdown() { // NOLINT(*-convert-member-functions-to-static)
     Mix_CloseAudio();
     Mix_Quit();
 }
