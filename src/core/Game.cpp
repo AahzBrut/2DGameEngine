@@ -22,6 +22,7 @@
 #include "systems/CameraMovementSystem.h"
 #include "systems/CollisionSystem.h"
 #include "systems/DamageSystem.h"
+#include "systems/HealthBarSystem.h"
 #include "systems/KeyboardControlSystem.h"
 #include "systems/MovementSystem.h"
 #include "systems/ProjectileEmissionSystem.h"
@@ -104,6 +105,7 @@ void Game::LoadLevel([[maybe_unused]] int level) {
     registry->AddSystem<DamageSystem>(eventBus);
     registry->AddSystem<SoundPlaySystem>(audioManager, eventBus);
     registry->AddSystem<RenderLabelSystem>();
+    registry->AddSystem<HealthBarSystem>(assetManager);
 
     assetManager->LoadTexture(renderer, "tank", "./assets/images/tank-panther-right.png");
     assetManager->LoadTexture(renderer, "truck", "./assets/images/truck-ford-right.png");
@@ -115,6 +117,8 @@ void Game::LoadLevel([[maybe_unused]] int level) {
     assetManager->LoadSoundEffect("helicopter-sound", "./assets/sounds/explosion4.wav");
     assetManager->LoadMusic("main-music-theme", "./assets/music/Abnormal Circumstances.mp3");
     assetManager->LoadFont("charriot-font", "./assets/fonts/charriot.ttf", 32);
+    assetManager->LoadFont("pico-5-font", "./assets/fonts/pico8.ttf", 5);
+    assetManager->LoadFont("pico-10-font", "./assets/fonts/pico8.ttf", 10);
 
     const auto &jungleMapSprite = assetManager->GetTexture("jungle-map");
     mapHeight = 20;
@@ -295,6 +299,7 @@ void Game::Render() const {
     registry->GetSystem<RenderSystem>().Render(renderer, camera);
     if (isDebugMode) registry->GetSystem<RenderColliderSystem>().Render(renderer, camera);
     registry->GetSystem<RenderLabelSystem>().Render(renderer);
+    registry->GetSystem<HealthBarSystem>().Render(renderer, camera);
 
     SDL_RenderPresent(renderer.get());
 }

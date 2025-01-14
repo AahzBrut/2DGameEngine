@@ -99,6 +99,7 @@ add_executable(2DGameEngine src/main.cpp
         include/events/SoundEmitterEvent.h
         include/components/LabelComponent.h
         include/systems/RenderLabelSystem.h
+        include/systems/HealthBarSystem.h
 )
 
 target_link_libraries(2DGameEngine PRIVATE SDL2::SDL2main SDL2::SDL2-static glm SDL2_image::SDL2_image-static SDL2_mixer::SDL2_mixer-static SDL2_ttf::SDL2_ttf-static)
