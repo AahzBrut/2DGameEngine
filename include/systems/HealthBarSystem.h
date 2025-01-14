@@ -42,6 +42,8 @@ class HealthBarSystem : public System {
     void RenderHealthBar(SDL_Renderer *renderer, const float healthPercent, const glm::vec2 position, const float width) const {
         // ReSharper disable once CppUseStructuredBinding
         const auto healthColor = GetHealthColor(healthPercent);
+        Uint8 r,g,b,a;
+        SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
         SDL_SetRenderDrawColor(renderer, healthColor.r, healthColor.g, healthColor.b, healthColor.a);
         const auto healthBarWidth = static_cast<int>(healthPercent * width);
 
@@ -53,6 +55,7 @@ class HealthBarSystem : public System {
         };
 
         SDL_RenderFillRect(renderer, &dstRect);
+        SDL_SetRenderDrawColor(renderer, r, g, b, a);
     }
 
 public:
