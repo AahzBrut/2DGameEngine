@@ -48,9 +48,9 @@ class HealthBarSystem : public System {
         const auto healthBarWidth = static_cast<int>(healthPercent * width);
 
         const auto dstRect = SDL_Rect{
-            static_cast<int>(position.x),
+            static_cast<int>(position.x) + healthBarWidth / 10,
             static_cast<int>(position.y) - 5,
-            healthBarWidth,
+            healthBarWidth * 8 / 10,
             5
         };
 
