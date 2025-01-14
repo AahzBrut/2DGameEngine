@@ -52,7 +52,22 @@ FetchContent_Declare(
         GIT_PROGRESS TRUE
 )
 
-FetchContent_MakeAvailable(SDL2 glm SDL2_image SDL2_mixer SDL_ttf)
+FetchContent_Declare(
+        sol2
+        GIT_REPOSITORY https://github.com/ThePhD/sol2.git
+        GIT_TAG v3.3.1
+        GIT_SHALLOW TRUE
+        GIT_PROGRESS TRUE
+)
+
+FetchContent_Declare(
+        lua
+        GIT_REPOSITORY https://github.com/walterschell/Lua.git
+        GIT_SHALLOW TRUE
+        GIT_PROGRESS TRUE
+)
+
+FetchContent_MakeAvailable(SDL2 glm SDL2_image SDL2_mixer SDL_ttf sol2 lua)
 
 add_executable(2DGameEngine src/main.cpp
         include/core/Game.h
@@ -102,7 +117,7 @@ add_executable(2DGameEngine src/main.cpp
         include/systems/HealthBarSystem.h
 )
 
-target_link_libraries(2DGameEngine PRIVATE SDL2::SDL2main SDL2::SDL2-static glm SDL2_image::SDL2_image-static SDL2_mixer::SDL2_mixer-static SDL2_ttf::SDL2_ttf-static)
+target_link_libraries(2DGameEngine PRIVATE SDL2::SDL2main SDL2::SDL2-static glm SDL2_image::SDL2_image-static SDL2_mixer::SDL2_mixer-static SDL2_ttf::SDL2_ttf-static sol2::sol2 lua_static)
 target_include_directories(2DGameEngine PUBLIC include)
 
 
