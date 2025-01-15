@@ -1,5 +1,6 @@
 #pragma once
-#include "core/Game.h"
+#include "components/CameraFollowComponent.h"
+#include "components/TransformComponent.h"
 #include "ecs/ECS.h"
 
 

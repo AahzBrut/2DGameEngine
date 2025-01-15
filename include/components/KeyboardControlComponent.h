@@ -2,7 +2,7 @@
 #include "glm/vec2.hpp"
 
 struct KeyboardControlComponent {
-    typedef glm::vec2 Vec2;
+    using Vec2 = glm::vec2;
     Vec2 UpVector;
     Vec2 RightVector;
     Vec2 DownVector;

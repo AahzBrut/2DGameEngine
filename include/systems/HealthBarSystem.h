@@ -12,24 +12,24 @@ class HealthBarSystem : public System {
     SDL_Color damagedColor = {192, 192, 0, 255};
     SDL_Color criticalColor = {255, 0, 0, 255};
 
-    SDL_Color GetHealthColor(const float healthPercent) const {
+    [[nodiscard]] SDL_Color GetHealthColor(const float healthPercent) const {
         return healthPercent > .8f ? healthyColor : healthPercent > .3f ? damagedColor : criticalColor;
     }
 
     void RenderHealthLabel(SDL_Renderer *renderer, const float healthPercent, const glm::vec2 &position,
                            const float width) const {
         const auto surface = TTF_RenderText_Blended(
-            assetManager->GetFont("pico-5-font").get(),
+            assetManager->GetFont("pico-font-5").get(),
             std::format("{}%", static_cast<int>(healthPercent * 100)).c_str(),
             GetHealthColor(healthPercent));
 
         const auto texture = SDL_CreateTextureFromSurface(renderer, surface);
 
-        const auto offsetX = (width - surface->w) * 0.5f;
+        const auto offsetX = (width - static_cast<float>(surface->w)) * 0.5f;
 
         const auto dstRect = SDL_Rect{
             static_cast<int>(position.x + offsetX),
-            static_cast<int>(position.y - 7 - surface->h),
+            static_cast<int>(position.y - 7 - static_cast<float>(surface->h)),
             surface->w,
             surface->h
         };
@@ -39,10 +39,11 @@ class HealthBarSystem : public System {
         SDL_DestroyTexture(texture);
     }
 
-    void RenderHealthBar(SDL_Renderer *renderer, const float healthPercent, const glm::vec2 position, const float width) const {
+    void RenderHealthBar(SDL_Renderer *renderer, const float healthPercent, const glm::vec2 position,
+                         const float width) const {
         // ReSharper disable once CppUseStructuredBinding
         const auto healthColor = GetHealthColor(healthPercent);
-        Uint8 r,g,b,a;
+        Uint8 r, g, b, a;
         SDL_GetRenderDrawColor(renderer, &r, &g, &b, &a);
         SDL_SetRenderDrawColor(renderer, healthColor.r, healthColor.g, healthColor.b, healthColor.a);
         const auto healthBarWidth = static_cast<int>(healthPercent * width);
@@ -75,13 +76,13 @@ public:
             const auto &transformComponent = entity.GetComponent<TransformComponent>();
             const auto &spriteComponent = entity.GetComponent<SpriteComponent>();
             const auto healthPercent = healthComponent.GetPercentage();
-            const auto labelPosition = glm::vec2(transformComponent.position.x - camera.x,
-                                                 transformComponent.position.y - camera.y);
+            const auto labelPosition = glm::vec2(transformComponent.position.x - static_cast<float>(camera.x),
+                                                 transformComponent.position.y - static_cast<float>(camera.y));
 
             RenderHealthLabel(renderer.get(), healthPercent, labelPosition,
-                              spriteComponent.rect.w * transformComponent.scale.x);
+                              static_cast<float>(spriteComponent.rect.w) * transformComponent.scale.x);
             RenderHealthBar(renderer.get(), healthPercent, labelPosition,
-                            spriteComponent.rect.w * transformComponent.scale.x);
+                            static_cast<float>(spriteComponent.rect.w) * transformComponent.scale.x);
         }
     }
 };

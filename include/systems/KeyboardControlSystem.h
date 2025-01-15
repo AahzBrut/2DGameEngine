@@ -1,5 +1,8 @@
 #pragma once
+#include "components/DirectionComponent.h"
 #include "components/KeyboardControlComponent.h"
+#include "components/ProjectileEmitterComponent.h"
+#include "components/VelocityComponent.h"
 #include "ecs/ECS.h"
 #include "events/KeyPressedEvent.h"
 #include "event_bus/EventBus.h"
@@ -7,8 +10,7 @@
 
 class KeyboardControlSystem : public System {
 public:
-    explicit KeyboardControlSystem(
-        const Unique<EventBus> &eventBus) {
+    explicit KeyboardControlSystem(const Unique<EventBus> &eventBus) {
         RequireComponent<KeyboardControlComponent>();
         RequireComponent<AnimationComponent>();
         RequireComponent<VelocityComponent>();

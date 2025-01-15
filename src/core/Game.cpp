@@ -7,17 +7,9 @@
 #include <SDL2/SDL.h>
 
 #include "components/AnimationComponent.h"
-#include "components/BoxColliderComponent.h"
-#include "components/CameraFollowComponent.h"
-#include "components/DirectionComponent.h"
-#include "components/HealthComponent.h"
-#include "components/LabelComponent.h"
-#include "components/ProjectileEmitterComponent.h"
 #include "components/SpriteComponent.h"
-#include "components/TransformComponent.h"
-#include "components/VelocityComponent.h"
+#include "core/LevelLoader.h"
 #include "core/Logger.h"
-#include "glm/vec2.hpp"
 #include "systems/AnimationSystem.h"
 #include "systems/CameraMovementSystem.h"
 #include "systems/CollisionSystem.h"
@@ -91,8 +83,7 @@ void Game::Initialize() {
     isRunning = true;
 }
 
-// ReSharper disable once CppMemberFunctionMayBeConst
-void Game::LoadLevel([[maybe_unused]] int level) {
+void Game::Setup() {
     registry->AddSystem<MovementSystem>();
     registry->AddSystem<RenderSystem>();
     registry->AddSystem<AnimationSystem>();
@@ -107,134 +98,9 @@ void Game::LoadLevel([[maybe_unused]] int level) {
     registry->AddSystem<RenderLabelSystem>();
     registry->AddSystem<HealthBarSystem>(assetManager);
 
-    assetManager->LoadTexture(renderer, "tank", "./assets/images/tank-panther-right.png");
-    assetManager->LoadTexture(renderer, "truck", "./assets/images/truck-ford-right.png");
-    assetManager->LoadTexture(renderer, "jungle-map", "./assets/tilemaps/jungle.png");
-    assetManager->LoadTexture(renderer, "chopper", "./assets/images/chopper-spritesheet.png");
-    assetManager->LoadTexture(renderer, "radar", "./assets/images/radar.png");
-    assetManager->LoadTexture(renderer, "bullet", "./assets/images/bullet.png");
-
-    assetManager->LoadSoundEffect("helicopter-sound", "./assets/sounds/explosion4.wav");
-    assetManager->LoadMusic("main-music-theme", "./assets/music/Abnormal Circumstances.mp3");
-    assetManager->LoadFont("charriot-font", "./assets/fonts/charriot.ttf", 32);
-    assetManager->LoadFont("pico-5-font", "./assets/fonts/pico8.ttf", 5);
-    assetManager->LoadFont("pico-10-font", "./assets/fonts/pico8.ttf", 10);
-
-    const auto &jungleMapSprite = assetManager->GetTexture("jungle-map");
-    mapHeight = 20;
-    std::fstream mapFile;
-    mapWidth = 25;
-    constexpr auto tileScale = 2.0;
-    constexpr auto tileSize = 32;
-    mapFile.open("./assets/tilemaps/jungle.map");
-    for (auto y = 0; y < mapHeight; y++) {
-        for (auto x = 0; x < mapWidth; x++) {
-            char character;
-            mapFile.get(character);
-            const auto srcRectY = tileSize * std::atoi(&character); // NOLINT(*-err34-c)
-            mapFile.get(character);
-            const auto srcRectX = tileSize * std::atoi(&character); // NOLINT(*-err34-c)
-            mapFile.ignore();
-            registry->CreateEntity()
-                    .AddComponent<TransformComponent>(glm::vec2{x * tileScale * tileSize, y * tileScale * tileSize},
-                                                      glm::vec2{tileScale, tileScale}, 0.0)
-                    .AddComponent<SpriteComponent>(jungleMapSprite, SDL_Rect{srcRectX, srcRectY, tileSize, tileSize},
-                                                   0);
-        }
-    }
-    mapHeight = mapHeight * tileSize * static_cast<int>(tileScale);
-    mapWidth = mapWidth * tileSize * static_cast<int>(tileScale);
-
-    mapFile.close();
-
-    const auto &tankSprite = assetManager->GetTexture("tank");
-    registry->CreateEntity()
-            .AddComponent<TransformComponent>(glm::vec2{0}, glm::vec2{2, 2}, 0.0)
-            .AddComponent<VelocityComponent>(glm::vec2{0})
-            .AddComponent<SpriteComponent>(tankSprite, tankSprite.TextureRect(), 2)
-            .AddComponent<HealthComponent>(20, 20)
-            .AddComponent<DirectionComponent>()
-            .AddComponent<ProjectileEmitterComponent>(glm::vec2{50, 50}, CollisionLayer::EnemyBullet)
-            .AddComponent<BoxColliderComponent>(26, 16, glm::vec2(3, 8), CollisionLayer::Enemy);
-
-    registry->CreateEntity()
-            .AddComponent<TransformComponent>(glm::vec2{200, 200}, glm::vec2{2, 2}, 0.0)
-            .AddComponent<VelocityComponent>(glm::vec2{0})
-            .AddComponent<SpriteComponent>(tankSprite, tankSprite.TextureRect(), 2)
-            .AddComponent<HealthComponent>(20, 20)
-            .AddComponent<DirectionComponent>()
-            .AddComponent<ProjectileEmitterComponent>(glm::vec2{50, 50}, CollisionLayer::EnemyBullet)
-            .AddComponent<BoxColliderComponent>(26, 16, glm::vec2(3, 8), CollisionLayer::Enemy);
-
-    const auto &truckSprite = assetManager->GetTexture("truck");
-    registry->CreateEntity()
-            .AddComponent<TransformComponent>(glm::vec2{400, 0}, glm::vec2{2, 2}, 0.0)
-            .AddComponent<VelocityComponent>(glm::vec2{0})
-            .AddComponent<SpriteComponent>(truckSprite, truckSprite.TextureRect(), 1)
-            .AddComponent<HealthComponent>(20, 20)
-            .AddComponent<DirectionComponent>()
-            .AddComponent<ProjectileEmitterComponent>(glm::vec2{50, 50}, CollisionLayer::EnemyBullet)
-            .AddComponent<BoxColliderComponent>(32, 32, glm::vec2{0}, CollisionLayer::Enemy);
-
-    const auto &chopperSprite = assetManager->GetTexture("chopper");
-    registry->CreateEntity()
-            .AddComponent<TransformComponent>(glm::vec2{400, 400}, glm::vec2{2, 2}, 0.0)
-            .AddComponent<VelocityComponent>(glm::vec2{0, 0})
-            .AddComponent<SpriteComponent>(chopperSprite, chopperSprite.TextureRect(), 3)
-            .AddComponent<BoxColliderComponent>(32, 32, glm::vec2{0}, CollisionLayer::Player)
-            .AddComponent<HealthComponent>(100, 100)
-            .AddComponent<DirectionComponent>(glm::vec2{0, -1})
-            .AddComponent<ProjectileEmitterComponent>(glm::vec2{100, 100}, CollisionLayer::PlayerBullet, 500, 10000, 10,
-                                                      false)
-            .AddComponent<KeyboardControlComponent>(glm::vec2{0, -80}, glm::vec2{80, 0}, glm::vec2{0, 80},
-                                                    glm::vec2{-80, 0})
-            .AddComponent<CameraFollowComponent>()
-            .AddComponent<AnimationComponent>(List{
-                                                  List{
-                                                      SDL_Rect{0, 0, 32, 32},
-                                                      SDL_Rect{32, 0, 32, 32},
-                                                  },
-                                                  List{
-                                                      SDL_Rect{0, 32, 32, 32},
-                                                      SDL_Rect{32, 32, 32, 32},
-                                                  },
-                                                  List{
-                                                      SDL_Rect{0, 64, 32, 32},
-                                                      SDL_Rect{32, 64, 32, 32},
-                                                  },
-                                                  List{
-                                                      SDL_Rect{0, 96, 32, 32},
-                                                      SDL_Rect{32, 96, 32, 32},
-                                                  },
-                                              }, 0, 0, 8.f, true, 0);
-
-    const auto &radarSprite = assetManager->GetTexture("radar");
-    registry->CreateEntity()
-            .AddComponent<TransformComponent>(glm::vec2{windowWidth - 72, 8}, glm::vec2{1, 1}, 0.0)
-            .AddComponent<SpriteComponent>(radarSprite, radarSprite.TextureRect(), 3,
-                                           SDL_Color{255, 255, 255, 255}, true)
-            .AddComponent<AnimationComponent>(List<List<SDL_Rect> >{
-                                                  List{
-                                                      SDL_Rect{0, 0, 64, 64},
-                                                      SDL_Rect{64, 0, 64, 64},
-                                                      SDL_Rect{128, 0, 64, 64},
-                                                      SDL_Rect{192, 0, 64, 64},
-                                                      SDL_Rect{256, 0, 64, 64},
-                                                      SDL_Rect{320, 0, 64, 64},
-                                                      SDL_Rect{384, 0, 64, 64},
-                                                      SDL_Rect{448, 0, 64, 64},
-                                                  }
-                                              }, 0, 0, 8.f, true, 0);
-    registry->CreateEntity()
-            .AddComponent<LabelComponent>(
-                glm::vec2{200, 0},
-                "Test label",
-                assetManager.get()->GetFont("charriot-font"),
-                SDL_Color{255, 255, 255, 255});
-}
-
-void Game::Setup() {
-    LoadLevel(1);
+    lua.open_libraries(sol::lib::base, sol::lib::math);
+    const LevelLoader levelLoader{lua, assetManager, renderer, registry};
+    levelLoader.LoadLevel(1);
 }
 
 void Game::Run() {

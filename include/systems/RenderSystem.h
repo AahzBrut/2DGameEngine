@@ -26,7 +26,7 @@ public:
             });
         }
 
-        std::sort(entityTuples.begin(), entityTuples.end(), [](const EntityTuple &a, const EntityTuple &b) {
+        std::ranges::sort(entityTuples, [](const EntityTuple &a, const EntityTuple &b) {
             return a.sprite->zIndex < b.sprite->zIndex;
         });
 

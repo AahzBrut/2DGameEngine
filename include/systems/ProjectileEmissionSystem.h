@@ -28,7 +28,7 @@ public:
 
     void Update() const {
         if (!assetManager || !registry) return;
-        const auto &bulletSprite = assetManager->GetTexture("bullet");
+        const auto &bulletSprite = assetManager->GetTexture("bullet-texture");
         for (const auto entity: GetSystemEntities()) {
             const auto &transform = entity.GetComponent<TransformComponent>();
             const auto &direction = entity.GetComponent<DirectionComponent>();

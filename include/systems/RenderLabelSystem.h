@@ -1,4 +1,5 @@
 #pragma once
+#include "components/LabelComponent.h"
 #include "ecs/ECS.h"
 
 

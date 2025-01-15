@@ -14,9 +14,9 @@ struct AnimationComponent {
 
     explicit AnimationComponent(
         const List<List<SDL_Rect>> &frames = List<List<SDL_Rect>>(),
+        const float frames_per_second = 0.0f,
         const int currentSequence = 0,
         const int current_frame = 0,
-        const float frames_per_second = 0.0f,
         const bool loop = false,
         const Uint32 start_time = SDL_GetTicks())
         : frames{frames},

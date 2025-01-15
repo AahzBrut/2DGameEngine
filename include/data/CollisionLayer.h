@@ -10,6 +10,15 @@ enum class CollisionLayer {
     LastLayer,
 };
 
+inline CollisionLayer CollisionLayerFromString(const std::string& str) {
+    if (str == "None") { return CollisionLayer::None; }
+    if (str == "Player") { return CollisionLayer::Player; }
+    if (str == "PlayerBullet") { return CollisionLayer::PlayerBullet; }
+    if (str == "Enemy") { return CollisionLayer::Enemy; }
+    if (str == "EnemyBullet") { return CollisionLayer::EnemyBullet; }
+    return CollisionLayer::None;
+}
+
 constexpr auto LayersNumber = static_cast<int>(CollisionLayer::LastLayer);
 
 class LayersCollisionSettings {
@@ -39,6 +48,3 @@ public:
         return layers[static_cast<int>(firstLayer)].test(static_cast<int>(secondLayer));
     }
 };
-
-bool LayersCollisionSettings::initialized;
-std::bitset<LayersNumber> LayersCollisionSettings::layers[LayersNumber];

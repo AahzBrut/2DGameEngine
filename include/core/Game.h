@@ -2,6 +2,8 @@
 
 #include <memory>
 #include <SDL.h>
+#include <sol/state.hpp>
+
 #include "SmartPointers.h"
 #include "asset_manager/AssetManager.h"
 #include "audio_manager/AudioManager.h"
@@ -17,6 +19,9 @@ class Game {
     bool isRunning{false};
     bool isDebugMode{false};
     SDL_Rect camera{};
+
+    sol::state lua;
+
     Unique<SDL_Window> window;
     Unique<SDL_Renderer> renderer;
     Unique<Registry> registry{new Registry()};
@@ -34,7 +39,6 @@ public:
     ~Game();
 
     void Initialize();
-    void LoadLevel(int level);
     void Setup();
     void Run();
 
