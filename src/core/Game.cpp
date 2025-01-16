@@ -98,7 +98,7 @@ void Game::Setup() {
     registry->AddSystem<SoundPlaySystem>(audioManager, eventBus);
     registry->AddSystem<RenderLabelSystem>();
     registry->AddSystem<HealthBarSystem>(assetManager);
-    registry->AddSystem<ExecuteScriptSystem>();
+    registry->AddSystem<ExecuteScriptSystem>(lua);
 
     lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::string);
     const LevelLoader levelLoader{lua, assetManager, renderer, registry};

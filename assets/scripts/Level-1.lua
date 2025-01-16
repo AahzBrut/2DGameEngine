@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-global
 Level = {
     assets = {
         { type = "texture", id = "tilemap-texture", file = "./assets/tilemaps/jungle.png" },
@@ -93,7 +94,8 @@ Level = {
                 cameraFollow = {},
                 onUpdateScript = {
                     function(entity, deltaTime, elapsedTime)
-                        print(string.format("Executing LUA script, deltaTime: %.6f", deltaTime))
+                        print(string.format("Entity id: %d, delta time: %.8f, elapsed time: %d", entity:GetId(), deltaTime, elapsedTime))
+                        SetPosition(entity, 500, 500)
                     end
                 }
             }

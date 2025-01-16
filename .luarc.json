@@ -1,5 +1,3 @@
 {
-    "diagnostics.globals": [
-        "some_variable"
-    ]
+    "diagnostics.globals": []
 }
