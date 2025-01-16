@@ -14,6 +14,7 @@
 #include "systems/CameraMovementSystem.h"
 #include "systems/CollisionSystem.h"
 #include "systems/DamageSystem.h"
+#include "systems/ExecuteScriptSystem.h"
 #include "systems/HealthBarSystem.h"
 #include "systems/KeyboardControlSystem.h"
 #include "systems/MovementSystem.h"
@@ -97,8 +98,9 @@ void Game::Setup() {
     registry->AddSystem<SoundPlaySystem>(audioManager, eventBus);
     registry->AddSystem<RenderLabelSystem>();
     registry->AddSystem<HealthBarSystem>(assetManager);
+    registry->AddSystem<ExecuteScriptSystem>();
 
-    lua.open_libraries(sol::lib::base, sol::lib::math);
+    lua.open_libraries(sol::lib::base, sol::lib::math, sol::lib::string);
     const LevelLoader levelLoader{lua, assetManager, renderer, registry};
     levelLoader.LoadLevel(1);
 }
@@ -153,6 +155,7 @@ void Game::Update() {
     registry->GetSystem<ProjectileEmissionSystem>().Update();
     registry->GetSystem<TempEntitiesRemovalSystem>().Update();
     registry->GetSystem<SoundPlaySystem>().Update();
+    registry->GetSystem<ExecuteScriptSystem>().Update(deltaTime);
 
     lastFrameTicks = SDL_GetTicks();
 }

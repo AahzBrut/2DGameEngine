@@ -118,6 +118,8 @@ add_executable(2DGameEngine src/main.cpp
         include/core/LevelLoader.h
         src/core/LevelLoader.cpp
         src/data/CollisionLayer.cpp
+        include/components/ScriptComponent.h
+        include/systems/ExecuteScriptSystem.h
 )
 
 target_link_libraries(2DGameEngine PRIVATE SDL2::SDL2main SDL2::SDL2-static glm SDL2_image::SDL2_image-static SDL2_mixer::SDL2_mixer-static SDL2_ttf::SDL2_ttf-static sol2::sol2 lua_static)

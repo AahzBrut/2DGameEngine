@@ -90,7 +90,12 @@ Level = {
                     downVector = { x = 0, y = 80 },
                     leftVector = { x = -80, y = 0 },
                 },
-                cameraFollow = {}
+                cameraFollow = {},
+                onUpdateScript = {
+                    function(entity, deltaTime, elapsedTime)
+                        print(string.format("Executing LUA script, deltaTime: %.6f", deltaTime))
+                    end
+                }
             }
         }
     }

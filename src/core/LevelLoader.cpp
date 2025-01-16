@@ -10,6 +10,7 @@
 #include "components/KeyboardControlComponent.h"
 #include "components/LabelComponent.h"
 #include "components/ProjectileEmitterComponent.h"
+#include "components/ScriptComponent.h"
 #include "components/SpriteComponent.h"
 #include "components/TransformComponent.h"
 #include "components/VelocityComponent.h"
@@ -167,6 +168,12 @@ void LevelLoader::LoadLevel(int levelId) const {
                 entity.AddComponent<HealthComponent>(
                     healthDef["health"],
                     healthDef["maxHealth"]
+                );
+            }
+            if (const auto onUpdateFunctionDef = components["onUpdateScript"]; onUpdateFunctionDef.valid()) {
+                sol::function onUpdateScript = onUpdateFunctionDef[1];
+                entity.AddComponent<ScriptComponent>(
+                    onUpdateScript
                 );
             }
         }
